@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Уроки — Каталог</title>
+    <!-- Подключаем Tailwind одной строчкой из интернета. Без докера, без сборки! -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-900 text-slate-100 p-8">
+    <header class="max-w-4xl mx-auto mb-12">
+      <h1 class="text-3xl font-bold text-emerald-400">Уроки</h1>
+      <p class="text-slate-400 mt-2">
+        Из моих видео-уроков по фудстайлингу вы получите профессиональные знания
+        и навыки фудстилиста для работы с различными категориями блюд и
+        продуктов на съёмочной площадке или для домашних творческих съёмок.
+      </p>
+      <p class="text-slate-400 mt-2">
+        С помощью этих знаний вы сможете качественно повысить уровень своего
+        портфолио, сотрудничать с рекламными агентствами, участвовать в
+        рекламных съёмках и проектах известных компаний
+      </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto">
+      <!-- Сюда JS будет вставлять карточки уроков -->
+      <div id="lessons-container" class="grid gap-6 md:grid-cols-2">
+        <p
+          id="loading-status"
+          class="text-emerald-400 animate-pulse col-span-2"
+        >
+          Загрузка каталога из Go-бэкенда...
+        </p>
+      </div>
+    </main>
+
+    <script>
+      const API_URL = "http://localhost:8000/lessons";
+      const container = document.getElementById("lessons-container");
+      const statusText = document.getElementById("loading-status");
+
+      async function loadLessons() {
+        try {
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error("Ошибка сервера");
+
+          const result = await response.json();
+
+          // Убираем текст загрузки
+          statusText.remove();
+
+          if (result.items.length === 0) {
+            container.innerHTML = `<p class="text-amber-400 bg-amber-950/20 p-4 rounded-lg border border-amber-900 col-span-2">Бэкенд на связи, но в таблице shop.lessons пока нет уроков.</p>`;
+            return;
+          }
+
+          // Отрисовываем карточки через обычный цикл
+          for (let i = 0; i < result.items.length; i++) {
+            const lesson = result.items[i];
+            console.log("Lesson:", lesson); // <-- Добавлено
+
+            const card = document.createElement("div");
+            card.className =
+              "bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl flex flex-col justify-between";
+            card.innerHTML = `
+                <div>
+                    <h2 class="text-xl font-semibold text-white mb-4">${escapeHTML(lesson.title)}</h2>
+                    ${
+                      lesson.title_video_url
+                        ? `<video controls class="w-full h-auto rounded-lg mb-4">
+                        <source src="${escapeHTML(lesson.title_video_url)}" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                      </video>`
+                        : '<p class="text-red-400">Нет video URL</p>'
+                    }
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4 text-justify">${escapeHTML(lesson.description || "")}</p>
+                </div>
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-700">
+                    <span class="text-2xl font-bold text-emerald-400">${lesson.price} ₽</span>
+                    <button onclick="buyLesson('${lesson.lessonId}')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-4 py-2 rounded-lg transition-colors">
+                        Купить доступ
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+          }
+        } catch (error) {
+          console.error(error);
+          statusText.className =
+            "text-red-400 bg-red-950/30 p-4 rounded-lg border border-red-900 col-span-2";
+          statusText.innerText =
+            "Не удалось подключиться к Go-бэкенду. Проверьте, запущен ли сервер на порту 8000 и включен ли CORS.";
+        }
+      }
+
+      function buyLesson(lessonId) {
+        alert(
+          `Инициируем покупку урока ID: ${lessonId}. Тут будет редирект на Продамус!`,
+        );
+      }
+
+      // Защита от XSS атак при выводе текста из базы данных
+      function escapeHTML(str) {
+        return str.replace(
+          /[&<>'"]/g,
+          (tag) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;",
+            })[tag] || tag,
+        );
+      }
+
+      // Запуск при загрузке страницы
+      document.addEventListener("DOMContentLoaded", loadLessons);
+    </script>
+  </body>
+</html>
