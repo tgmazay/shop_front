@@ -25,6 +25,7 @@
       }
     }
   },
+  "forwardPorts": [5500],
   "postCreateCommand": "echo 'Среда чистого HTML + JS готова!'",
   "remoteUser": "root"
 }
