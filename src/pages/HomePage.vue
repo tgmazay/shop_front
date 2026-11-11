@@ -209,10 +209,10 @@ function scrollToSection(id) {
       <div class="relative z-10 max-w-[1600px] mx-auto px-6 w-full py-24 lg:py-32">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div class="space-y-8">
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-900/50 border border-indigo-700 rounded-lg text-amber-400 text-xs font-bold uppercase tracking-widest">
+            <!--<div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-900/50 border border-indigo-700 rounded-lg text-amber-400 text-xs font-bold uppercase tracking-widest">
               <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
               Набор на новый поток открыт
-            </div>
+            </div>-->
             <h1 class="text-4xl lg:text-6xl leading-[1.1] tracking-tight uppercase">
               Научитесь создавать <br>
               <span class="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-500">продающие образы</span> <br>
