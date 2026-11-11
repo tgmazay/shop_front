@@ -92,7 +92,7 @@ export function useCarousel(images, clonesCount = 3) {
     dragOffset.value = 0
     disableTransition.value = false
 
-    const SWIPE_THRESHOLD = 50 // px
+    const SWIPE_THRESHOLD = 5 // default 50 px
     if (dx <= -SWIPE_THRESHOLD) nextSlide()
     else if (dx >= SWIPE_THRESHOLD) prevSlide()
     // иначе слайд сам плавно вернётся на место

@@ -260,26 +260,44 @@ function scrollToSection(id) {
     </section>
 
 <!-- 2. Why Choose Me -->
-<section id="about" class="pt-10 lg:pt-12 pb-12 lg:pb-16 bg-white">
+<!-- 2. Why Choose Me -->
+<section id="about" class="pt-4 lg:pt-6 pb-4 lg:pb-6 bg-white">
   <div class="max-w-[1600px] mx-auto px-6">
-    <div class="text-center max-w-3xl mx-auto mb-8">
-      <h2 class="text-3xl lg:text-5xl font-black text-indigo-950 mb-4 uppercase tracking-tight">
+    <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-6">
+      <h2 class="text-3xl lg:text-5xl font-black text-indigo-950 mb-2 uppercase tracking-tight">
         Почему выбирают меня
       </h2>
       <p class="text-lg text-slate-600">
         Не просто "делай как я", а "почему" и "как".
       </p>
     </div>
-    <div class="grid lg:grid-cols-3 gap-6 items-stretch">
-      <!-- Колонка 1: фото Натальи -->
-      <div class="rounded-2xl overflow-hidden border-4 border-indigo-100 shadow-2xl">
-        <img
-          src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp"
-          alt="Наталья Цыганова"
-          class="w-full h-full object-cover"
-          style="aspect-ratio: 4/5;"
-        >
+    <div class="grid lg:grid-cols-3 gap-8 items-stretch">
+      <!-- Колонка 1: фото + текст (в стиле плашки) -->
+      <div class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-dashed border-indigo-100 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300">
+        <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
+          <img
+            src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp"
+            alt="Наталья Цыганова"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          >
+        </div>
+        <h3 class="text-lg font-bold text-indigo-950 mb-2 group-hover:text-amber-600 transition-colors">
+          Наталья Цыганова
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
+          Привет, я фудстилист и фудфотограф Наталья Цыганова.
+        </p>
+        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
+          С 2013 года я занимаюсь профессиональным стайлингом и фотосъемкой еды. Я начинала свой путь с фудфотографии. Сейчас я в основном работаю как фудстилист   над созданием образов для рекламных кампаний производителей продуктов питания и напитков.
+        </p>
+        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
+          Я осуществляю как подготовку продуктов, напитков и композиций на основе готовой визуализации, так и разработку образов для рекламной фото- и видео-съемки, съемки на упаковку, съемки меню и имиджевой съемки для социальных сетей, а также создаю авторские рецепты и продумываю все детали подачи блюд, максимально используя все мои знания продуктов, сочетаемости их форм, цветов, текстур и вкусов.
+        </p>
+        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last">
+          Мои клиенты — это маркетинговые и рекламные агентства, бренды, рестораны, фермеры, шеф-повара и кондитеры, а также все те, для кого важна визуальная презентация своего продукта. Я участвую в рекламных съемках и иных проектах фуд-индустрии в качестве фудстилиста, сотрудничаю с российскими и международными рекламными агентствами, продакшн-студиями, производителями продукции и ресторанами, а также провожу мастер-классы, обучаю стайлингу блюд и дизайну еды.
+        </p>
       </div>
+
       <!-- Колонки 2 и 3: плашки 2×2 -->
       <div class="lg:col-span-2 grid sm:grid-cols-2 gap-8">
         <div
@@ -294,7 +312,7 @@ function scrollToSection(id) {
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             >
           </div>
-          <h3 class="text-lg font-bold text-indigo-950 mb-1 group-hover:text-amber-600 transition-colors">
+          <h3 class="text-lg font-bold text-indigo-950 mb-2 group-hover:text-amber-600 transition-colors">
             {{ benefit.title }}
           </h3>
           <p class="text-sm text-slate-600 leading-relaxed">
@@ -308,10 +326,10 @@ function scrollToSection(id) {
 
 
     <!-- 3. My photo -->
-    <section class="py-12 bg-indigo-950 overflow-hidden border-y border-indigo-900">
+    <section class="py-4 bg-indigo-950 overflow-hidden border-y border-indigo-900">
       <div class="max-w-[1600px] mx-auto px-6">
-        <div class="text-center max-w-3xl mx-auto mb-10 lg:mb-12">
-          <h2 class="text-3xl lg:text-5xl font-black text-white mb-4 uppercase tracking-tight">
+        <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-6">
+          <h2 class="text-3xl lg:text-5xl font-black text-white mb-2 uppercase tracking-tight">
             Мои работы
           </h2>
           <p class="text-lg text-white">
@@ -365,9 +383,9 @@ function scrollToSection(id) {
     </section>
 
     <!-- 4. Courses Section -->
-    <section id="courses" class="pt-10 lg:pt-12 pb-12 lg:pb-16 bg-indigo-50/50">
+    <section id="courses" class="pt-4 lg:pt-6 pb-4 lg:pb-6 bg-indigo-50/50">
       <div class="max-w-[1600px] mx-auto px-6">
-        <div class="text-center max-w-3xl mx-auto mb-10 lg:mb-12">
+        <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-6">
           <h2 class="text-3xl lg:text-5xl font-black text-indigo-950 mb-4 uppercase tracking-tight">
             Программы обучения
           </h2>
@@ -431,10 +449,10 @@ function scrollToSection(id) {
 
 
     <!--5. Student's photo -->
-    <section class="py-12 bg-indigo-950 overflow-hidden border-y border-indigo-900">
+    <section class="py-4 bg-indigo-950 overflow-hidden border-y border-indigo-900">
       <div class="max-w-[1600px] mx-auto px-6">
-        <div class="text-center max-w-3xl mx-auto mb-10 lg:mb-12">
-          <h2 class="text-3xl lg:text-5xl font-black text-white mb-4 uppercase tracking-tight">
+        <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-4">
+          <h2 class="text-3xl lg:text-5xl font-black text-white mb-2 uppercase tracking-tight">
             Работы студентов
           </h2>
           <p class="text-lg text-white">
@@ -489,10 +507,10 @@ function scrollToSection(id) {
 
 
 <!-- 6. Testimonials Carousel -->
-<section class="pt-10 lg:pt-12 pb-12 lg:pb-16 bg-white overflow-hidden">
+<section class="pt-4 lg:pt-6 pb-4 lg:pb-6 bg-white overflow-hidden">
   <div class="max-w-[1600px] mx-auto px-6">
-    <div class="text-center max-w-3xl mx-auto mb-10 lg:mb-12">
-      <h2 class="text-3xl lg:text-5xl font-black text-indigo-950 mb-4 uppercase tracking-tight">
+    <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-6">
+      <h2 class="text-3xl lg:text-5xl font-black text-indigo-950 mb-2 uppercase tracking-tight">
         Отзывы студентов
       </h2>
       <p class="text-lg text-slate-600">

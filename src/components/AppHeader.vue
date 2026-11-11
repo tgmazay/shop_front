@@ -1,6 +1,6 @@
 <template>
   <header class="border-b border-stone-100 bg-white/90 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-[1600px] mx-auto h-24 flex items-center justify-between px-4 relative">
+    <div class="max-w-[1600px] mx-auto h-14 flex items-center justify-between px-4 relative">
       
       <!-- Бургер (только мобильные) -->
       <button 
