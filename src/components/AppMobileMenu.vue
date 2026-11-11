@@ -90,19 +90,6 @@ function close() {
             Клуб
           </router-link>          
 
-          <!-- Раскрывающийся блок: Портфолиио -->
-          <details class="group/mobile-nav border-b border-stone-100/50">
-            <summary class="flex justify-between items-center hover:text-stone-900 py-3 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
-              <span>Портфолио</span>
-              <span class="text-[10px] text-stone-400 group-open/mobile-nav:rotate-180 transition-transform duration-200">▼</span>
-            </summary>
-            <div class="pl-4 pb-4 pt-2 space-y-4 uppercase tracking-widest text-stone-500 text-[10px]">
-              <router-link to="/restaurants" class="block hover:text-stone-900 transition" @click="close">съемка для ресторанов</router-link>
-              <router-link to="/foodstyling" class="block hover:text-stone-900 transition" @click="close">фудстайлинг</router-link>
-              <router-link to="/imagery" class="block hover:text-stone-900 transition" @click="close">имиджевая съемка</router-link>
-            </div>
-          </details>
-
           <!-- Раскрывающийся блок: Услуги -->
           <details class="group/mobile-nav border-b border-stone-100/50">
             <summary class="flex justify-between items-center hover:text-stone-900 py-3 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
@@ -113,6 +100,19 @@ function close() {
               <router-link to="/services/foodstyling" class="block hover:text-stone-900 transition" @click="close">Фудстайлинг</router-link>
               <router-link to="/services/foodphoto" class="block hover:text-stone-900 transition" @click="close">Фудфото</router-link>
               <router-link to="/services/training" class="block hover:text-stone-900 transition" @click="close">Персональные занятия</router-link>
+            </div>
+          </details>
+
+          <!-- Раскрывающийся блок: Портфолиио -->
+          <details class="group/mobile-nav border-b border-stone-100/50">
+            <summary class="flex justify-between items-center hover:text-stone-900 py-3 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
+              <span>Портфолио</span>
+              <span class="text-[10px] text-stone-400 group-open/mobile-nav:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div class="pl-4 pb-4 pt-2 space-y-4 uppercase tracking-widest text-stone-500 text-[10px]">
+              <router-link to="/restaurants" class="block hover:text-stone-900 transition" @click="close">съемка для ресторанов</router-link>
+              <router-link to="/foodstyling" class="block hover:text-stone-900 transition" @click="close">фудстайлинг</router-link>
+              <router-link to="/imagery" class="block hover:text-stone-900 transition" @click="close">имиджевая съемка</router-link>
             </div>
           </details>
 

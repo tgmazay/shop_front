@@ -26,19 +26,6 @@
         <router-link to="/lessons" class="hover:text-stone-900 transition py-8">Уроки</router-link>
         <router-link to="/club" class="hover:text-stone-900 transition py-8">Клуб</router-link>        
 
-        <!-- Выпадающее меню: Портфолио -->
-        <div class="relative group h-full flex items-center">
-          <router-link to="/portfolio" class="hover:text-stone-900 transition flex items-center gap-1 py-8">
-            Портфолио
-            <span class="text-[10px] lowercase text-stone-400 group-hover:text-stone-900 transition duration-200">▼</span>
-          </router-link>
-          <div class="absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 bg-white border border-stone-100 shadow-xl p-6 w-64 space-y-4 hidden group-hover:block transition z-50">
-            <router-link to="/restaurants" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">съемка для ресторанов</router-link>
-            <router-link to="/foodstyling" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">фудстайлинг</router-link>
-            <router-link to="/imagery" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">имиджевая съемка</router-link>
-          </div>
-        </div>
-
         <!-- Выпадающее меню: Услуги (Исправлено на тег span, так как это просто триггер ховера) -->
         <div class="relative group h-full flex items-center">
           <span class="hover:text-stone-900 transition flex items-center gap-1 py-8 cursor-pointer">
@@ -49,6 +36,19 @@
             <router-link to="/services/foodstyling" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">Фудстайлинг</router-link>
             <router-link to="/services/foodphoto" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">Фудфотосъемка</router-link>
             <router-link to="/services/training" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">Персональные занятия</router-link>
+          </div>
+        </div>
+
+        <!-- Выпадающее меню: Портфолио -->
+        <div class="relative group h-full flex items-center">
+          <router-link to="/portfolio" class="hover:text-stone-900 transition flex items-center gap-1 py-8">
+            Портфолио
+            <span class="text-[10px] lowercase text-stone-400 group-hover:text-stone-900 transition duration-200">▼</span>
+          </router-link>
+          <div class="absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 bg-white border border-stone-100 shadow-xl p-6 w-64 space-y-4 hidden group-hover:block transition z-50">
+            <router-link to="/restaurants" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">съемка для ресторанов</router-link>
+            <router-link to="/foodstyling" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">фудстайлинг</router-link>
+            <router-link to="/imagery" class="block text-stone-500 hover:text-stone-900 font-medium transition text-center uppercase tracking-widest text-[10px]">имиджевая съемка</router-link>
           </div>
         </div>
 
