@@ -1,0 +1,31 @@
+{
+  "name": "HTML + Vanilla JS Frontend Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ritwickdey.LiveServer",
+        "bradlc.vscode-tailwindcss",
+        "formulahendry.auto-rename-tag",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "workbench.colorTheme": "Dark Modern",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', Consolas, monospace",
+        "editor.fontLigatures": false,
+        "tailwindCSS.includeLanguages": {
+          "html": "html",
+          "plaintext": "html"
+        },
+        "tailwindCSS.emmetCompletions": true
+      }
+    }
+  },
+  "forwardPorts": [5500],
+  "postCreateCommand": "echo 'Среда чистого HTML + JS готова!'",
+  "remoteUser": "root"
+}
