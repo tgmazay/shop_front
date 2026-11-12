@@ -9,7 +9,7 @@ const beginYear = 2013
 const stats = [
   { value: `${currentYear - beginYear}+`, label: 'лет практики' },
   { value: '500+', label: 'выпускников по миру' },
-  { value: '10+', label: 'крупных брендов' },
+  { value: '40+', label: 'запусков программ' },
   { value: '98%', label: 'довольных студентов' }
 ];
 
@@ -22,7 +22,7 @@ const benefits = [
   {
     photo: 'https://optim.tildacdn.com/tild3565-3166-4665-b462-663463316537/-/resize/456x/-/format/webp/2_small.jpg.webp',
     title: 'Реальный опыт, а не теория',
-    description: 'Более 10 лет работы с топовыми рекламными агентствами, ресторанами и производителями. Только проверенные техники со сложных съемочных площадок.'
+    description: 'Более ' + (currentYear - beginYear) + ' лет работы с топовыми рекламными агентствами, ресторанами и производителями. Только проверенные техники со сложных съемочных площадок.'
   },
   {
     photo: 'https://optim.tildacdn.com/tild6138-6533-4138-b230-653338386534/-/resize/456x/-/format/webp/3_small.jpg.webp',
@@ -31,8 +31,8 @@ const benefits = [
   },
   {
     photo: 'https://optim.tildacdn.com/tild6531-6439-4764-a139-373635613863/-/resize/380x/-/format/webp/IMG_0537-Edit-Edit-E.jpg.webp',
-    title: 'Честная обратная связь',
-    description: 'Личная проверка домашних заданий, детальный разбор ваших работ и поддержка в закрытом сообществе профессионалов.'
+    title: 'Обратная связь',
+    description: 'Личная проверка домашних заданий, детальный разбор ваших работ и поддержка в закрытом сообществе профессионалов. Получите рекомендации, нужные непосредственно вам.'
   }
 ]
 
@@ -198,7 +198,7 @@ function scrollToSection(id) {
         <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
       </div>
       
-      <div class="relative z-10 max-w-[1600px] mx-auto px-6 w-full py-12 lg:py-32">
+      <div class="relative z-10 max-w-[1600px] mx-auto px-6 w-full py-12">
         <!-- Сетка на 2 колонки -->
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
@@ -263,13 +263,13 @@ function scrollToSection(id) {
             Почему выбирают меня
           </h2>
           <p class="text-lg text-slate-600">
-            Не просто "делай как я", а "почему" и "как".
+            Я учу не порядку действий, я привожу в порядок ваши мысли
 
           </p>
         </div>
         <div class="grid lg:grid-cols-3 gap-8 items-stretch">
           <!-- Колонка 1: фото + текст (в стиле плашки) -->
-          <div class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-slate-200 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300">
+          <div class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-slate-200 hover:border-slate-400 hover:bg-white hover:shadow-xl transition-all duration-300">
             <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
               <img
                 src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp"
@@ -299,7 +299,7 @@ function scrollToSection(id) {
             <div
               v-for="(benefit, index) in benefits"
               :key="index"
-              class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-slate-200 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300"
+              class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-slate-200 hover:border-slate-400 hover:bg-white hover:shadow-xl transition-all duration-300"
             >
               <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
                 <img
@@ -329,7 +329,7 @@ function scrollToSection(id) {
             Мои работы
           </h2>
           <p class="text-lg text-slate-500">
-            Хочешь уметь так же?
+            Не сомневайся, ты тоже так сможешь!
           </p>
         </div>
 
@@ -358,7 +358,7 @@ function scrollToSection(id) {
             <div
               v-for="(imgUrl, index) in carouselMy.displayImages"
               :key="`my-${index}-${imgUrl}`"
-              class="shrink-0 w-(--slide-w) aspect-9/14 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
+              class="shrink-0 w-(--slide-w) aspect-9/14 md:aspect-3/3 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
             >
                 <img :src="imgUrl" alt="Portfolio" class="w-full h-full object-cover">
             </div>
@@ -442,8 +442,6 @@ function scrollToSection(id) {
       </div>
     </section>
 
-
-
     <!--5. Student's photo -->
     <section class="py-4 bg-slate-10 overflow-hidden bg-slate-100">
       <div class="max-w-[1600px] mx-auto px-6">
@@ -452,7 +450,7 @@ function scrollToSection(id) {
             Работы студентов
           </h2>
           <p class="text-lg text-slate-600">
-            А вот они уже умеют
+            Чтобы исчезли последние сомнения
           </p>
         </div>
 
@@ -481,7 +479,7 @@ function scrollToSection(id) {
               <div
                 v-for="(imgUrl, index) in carouselStudents.displayImages"
                 :key="`student-${index}-${imgUrl}`"
-                class="shrink-0 w-(--slide-w) aspect-9/14 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
+                class="shrink-0 w-(--slide-w) aspect-9/14 md:aspect-3/3 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
               >
                 <img :src="imgUrl" alt="Student work" class="w-full h-full object-cover">
               </div>
@@ -541,7 +539,7 @@ function scrollToSection(id) {
                 :key="'review-' + index"
                 class="shrink-0 w-(--slide-w)"
               >
-                <div class="flex flex-col h-full p-8 rounded-2xl bg-slate-50 border border-indigo-100 hover:bg-white hover:shadow-xl hover:border-amber-100 transition-all duration-300">
+                <div class="flex flex-col h-full p-8 rounded-2xl bg-slate-50 border border-indigo-100 hover:bg-white hover:shadow-xl hover:border-slate-100 transition-all duration-300">
                   <div class="flex items-center gap-1 mb-6">
                     <svg v-for="i in 5" :key="i" class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
@@ -607,18 +605,18 @@ function scrollToSection(id) {
         <p class="text-lg text-white mb-10 max-w-2xl mx-auto">
           Присоединяйтесь к сообществу профессионалов и начните создавать визуальный контент, которым будете гордиться и за который будут платить бренды.
         </p>
-        <div class="flex flex-wrap justify-center gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
           <button 
-            @click="scrollToSection('courses')"
-            class="px-8 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-slate-400 transition-all duration-300 shadow-lg shadow-slate-900/50 hover:-translate-y-0.5"
+            @click="router.push('/cloub')"
+            class="px-8 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-slate-400 transition-all duration-300 shadow-lg shadow-slate-900/50 hover:-translate-y-0.5 min-w-65"
           >
-            Смотреть все курсы
+            Присоединиться
           </button>
           <button 
-            @click="router.push('/contact')"
-            class="px-8 py-4 bg-transparent text-slate-300 font-bold rounded-lg border-2 border-slate-300 hover:border-white hover:text-white transition-all duration-300 pl-11 pr-11"
+            @click="scrollToSection('courses')"
+            class="px-8 py-4 bg-transparent text-slate-300 font-bold rounded-lg border-2 border-slate-300 hover:border-white hover:text-white transition-all duration-300 pl-11 pr-11 min-w-65"
           >
-            Оставить заявку
+            Смотреть все уроки
           </button>
         </div>
       </div>
