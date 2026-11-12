@@ -61,7 +61,7 @@
         <CartLink class="hidden md:inline-flex" /> 
         
         <router-link 
-          to="/login" 
+          to="/signin"
           class="hidden md:block border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-6 py-3 hover:bg-stone-900 hover:text-white transition duration-300"
         >
           Вход в кабинет

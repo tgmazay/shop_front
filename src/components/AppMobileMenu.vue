@@ -137,7 +137,7 @@ function close() {
       <!-- Кнопка входа -->
       <div class="p-6 border-t border-stone-100">
         <router-link 
-          to="/login" 
+          to="/signin" 
           class="w-full block text-center border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest py-3 hover:bg-stone-900 hover:text-white transition duration-300"
           @click="close"
         >
