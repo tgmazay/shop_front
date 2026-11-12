@@ -4,12 +4,14 @@ import { useCarousel } from '@/composables/useCarousel'
 
 const router = useRouter()
 
+const currentYear = new Date().getFullYear();
+const beginYear = 2013
 const stats = [
-  { value: '10+', label: 'лет практики' },
-  { value: '500+', label: 'выпускников' },
-  { value: '100+', label: 'крупных брендов' },
+  { value: `${currentYear - beginYear}+`, label: 'лет практики' },
+  { value: '500+', label: 'выпускников по миру' },
+  { value: '10+', label: 'крупных брендов' },
   { value: '98%', label: 'довольных студентов' }
-]
+];
 
 const benefits = [
   {
@@ -182,151 +184,141 @@ function scrollToSection(id) {
   <div class="min-h-screen bg-slate-50 font-sans text-slate-900">
     
     <!-- 1. Hero Section -->
-    <section class="relative bg-slate-600 text-white flex items-center overflow-hidden" style="min-height: 600px;">
+    <section class="relative bg-slate-600 text-white flex items-center overflow-hidden min-h-125 lg:min-h-150">
+      <!-- Фон (видео) остается на всю ширину секции -->
       <div class="absolute inset-0 z-0 overflow-hidden">
         <div class="absolute inset-0 flex items-center justify-center">
           <iframe 
             class="absolute min-w-full min-h-full w-auto h-auto"
-            style="
-              left: 50%;
-              top: 50%;
-              transform: translate(-50%, -50%) scale(1.3);
-              width: 100vw;
-              height: 100vh;
-              min-width: 177.77vh;
-              min-height: 56.25vw;
-            "
+            style="left: 50%; top: 50%; transform: translate(-50%, -50%) scale(1.3); width: 100vw; height: 100vh; min-width: 177.77vh; min-height: 56.25vw;"
             src="https://www.youtube.com/embed/A3Xv1vfrW3I?autoplay=1&mute=1&loop=1&playlist=A3Xv1vfrW3I&controls=0&modestbranding=1&rel=0&cc_load_policy=0&iv_load_policy=3&hl=en"
-            title="Background Video"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
+            title="Background Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
           ></iframe>
         </div>
         <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
       </div>
       
-      <div class="relative z-10 max-w-[1600px] mx-auto px-6 w-full py-24 lg:py-32">
+      <div class="relative z-10 max-w-[1600px] mx-auto px-6 w-full py-12 lg:py-32">
+        <!-- Сетка на 2 колонки -->
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div class="space-y-8">
-            <!--<div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-900/50 border border-indigo-700 rounded-lg text-amber-400 text-xs font-bold uppercase tracking-widest">
-              <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-              Набор на новый поток открыт
-            </div>-->
-            <h1 class="text-4xl lg:text-6xl leading-[1.1] tracking-tight uppercase">
-              Научитесь создавать <br>
-              <span class="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-500">продающие образы</span> <br>
+          
+          <!-- БЛОК 1: Левая часть (Контент) -->
+          <div class="w-full max-w-2xl space-y-8">
+            <h1 class="text-4xl lg:text-6xl leading-[1.1] tracking-tight uppercase wrap-break-words">
+              Научитесь создавать <br class="hidden sm:block">
+              <span class="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-500">продающие образы</span> <br class="hidden sm:block">
               еды
             </h1>
-            <p class="text-lg text-indigo-200 leading-relaxed max-w-xl font-light">
-              Авторские видеокурсы по фудстайлингу от практика с 10-летним опытом. 
+
+            <p class="text-lg text-slate-200 leading-relaxed font-light text-justify wrap-break-words">
+              Авторские видеокурсы по фудстайлингу от практика с {{ currentYear - beginYear }}-летним опытом. 
               Уникальные методики, проверенные на сотнях часов съемок для крупнейших брендов и ресторанов.
             </p>
-            <div class="flex flex-wrap gap-4">
-              <button 
-                @click="scrollToSection('courses')"
-                class="px-8 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-slate-400 transition-all duration-300 shadow-lg shadow-slate-900/50 hover:-translate-y-0.5"
-              >
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+              <button @click="scrollToSection('courses')" class="min-w-70 px-6 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-slate-400 transition-all duration-300 shadow-lg shadow-slate-900/50 hover:-translate-y-0.5 text-center">
                 Выбрать программу обучения
               </button>
-              <button 
-                @click="scrollToSection('about')"
-                class="px-8 py-4 bg-transparent text-slate-300 font-bold rounded-lg border-2 border-slate-300 hover:border-white hover:text-white transition-all duration-300 pl-19.5 pr-19.5"
-              >
+              <button @click="scrollToSection('about')" class="min-w-70 px-6 py-4 bg-transparent text-slate-300 font-bold rounded-lg border-2 border-slate-300 hover:border-white hover:text-white transition-all duration-300 text-center">
                 Узнать подробнее
               </button>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-indigo-800/50">
-              <div v-for="stat in stats" :key="stat.label">
-                <div class="text-2xl lg:text-3xl font-black text-white">{{ stat.value }}</div>
-                <div class="text-sm text-indigo-300 mt-1">{{ stat.label }}</div>
+
+            <div class="grid grid-cols-4 gap-6 pt-4 border-t border-slate-500 w-full">
+              <div v-for="stat in stats" :key="stat.label" class="min-w-0">
+                <div class="text-2xl lg:text-3xl font-black text-white truncate">{{ stat.value }}</div>
+                <div class="text-sm text-slate-300 mt-1 wrap-break-words">{{ stat.label }}</div>
               </div>
             </div>
           </div>
-          <div class="relative hidden lg:flex justify-end">
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-2xl max-w-sm">
-              <div class="flex items-center gap-4 mb-4">
-                <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-600 text-xl font-bold">✓</div>
+
+          <!-- БЛОК 2: Правая часть (Карточка) -->
+          <!-- На мобилке скрыта (hidden), на десктопе flex -->
+          <div class="relative hidden lg:flex justify-end items-center w-full h-full min-h-100">
+            <!-- Карточка теперь центрирована вертикально в своей колонке -->
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl shadow-2xl max-w-md w-full">
+              <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 bg-amber-500 rounded-full flex items-center justify-center text-slate-600 text-2xl font-bold shrink-0">✓</div>
                 <div>
-                  <div class="font-bold text-white text-lg">500+ студентов</div>
-                  <div class="text-xs text-indigo-200">уже изменили свою карьеру</div>
+                  <div class="font-bold text-white text-xl">500+ студентов</div>
+                  <div class="text-sm text-indigo-200">уже изменили свою карьеру</div>
                 </div>
               </div>
-              <div class="h-px bg-white/20 w-full mb-4"></div>
-              <p class="text-sm text-indigo-100 italic">
+              <div class="h-px bg-white/20 w-full mb-6"></div>
+              <p class="text-base text-indigo-100 italic leading-relaxed">
                 "Этот курс дал мне системное понимание композиции, которого не хватало годами."
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Why Choose Me -->
+    <section id="about" class="pt-4 lg:pt-6 pb-4 lg:pb-6 bg-white">
+      <div class="max-w-[1600px] mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-6">
+          <h2 class="text-3xl lg:text-5xl text-slate-500 mb-2 uppercase tracking-tight">
+            Почему выбирают меня
+          </h2>
+          <p class="text-lg text-slate-600">
+            Не просто "делай как я", а "почему" и "как".
+
+          </p>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-8 items-stretch">
+          <!-- Колонка 1: фото + текст (в стиле плашки) -->
+          <div class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-slate-200 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300">
+            <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
+              <img
+                src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp"
+                alt="Наталья Цыганова"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              >
+            </div>
+            <h3 class="text-lg font-bold text-slate-600 mb-2 group-hover:text-amber-600 transition-colors">
+              Наталья Цыганова
+            </h3>
+            <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
+              Привет, я фудстилист и фудфотограф Наталья Цыганова.
+            </p>
+            <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
+              С {{ beginYear }} года я занимаюсь профессиональным стайлингом и фотосъемкой еды. Я начинала свой путь с фудфотографии. Сейчас я в основном работаю как фудстилист   над созданием образов для рекламных кампаний производителей продуктов питания и напитков.
+            </p>
+            <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
+              Я осуществляю как подготовку продуктов, напитков и композиций на основе готовой визуализации, так и разработку образов для рекламной фото- и видео-съемки, съемки на упаковку, съемки меню и имиджевой съемки для социальных сетей, а также создаю авторские рецепты и продумываю все детали подачи блюд, максимально используя все мои знания продуктов, сочетаемости их форм, цветов, текстур и вкусов.
+            </p>
+            <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last">
+              Мои клиенты — это маркетинговые и рекламные агентства, бренды, рестораны, фермеры, шеф-повара и кондитеры, а также все те, для кого важна визуальная презентация своего продукта. Я участвую в рекламных съемках и иных проектах фуд-индустрии в качестве фудстилиста, сотрудничаю с российскими и международными рекламными агентствами, продакшн-студиями, производителями продукции и ресторанами, а также провожу мастер-классы, обучаю стайлингу блюд и дизайну еды.
+            </p>
+          </div>
+
+          <!-- Колонки 2 и 3: плашки 2×2 -->
+          <div class="lg:col-span-2 grid sm:grid-cols-2 gap-8">
+            <div
+              v-for="(benefit, index) in benefits"
+              :key="index"
+              class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-slate-200 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300"
+            >
+              <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
+                <img
+                  :src="benefit.photo"
+                  :alt="benefit.title"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                >
+              </div>
+              <h3 class="text-lg font-bold text-slate-600 mb-2 group-hover:text-amber-600 transition-colors">
+                {{ benefit.title }}
+              </h3>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                {{ benefit.description }}
               </p>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-<!-- 2. Why Choose Me -->
-<!-- 2. Why Choose Me -->
-<section id="about" class="pt-4 lg:pt-6 pb-4 lg:pb-6 bg-white">
-  <div class="max-w-[1600px] mx-auto px-6">
-    <div class="text-center max-w-3xl mx-auto mb-4 lg:mb-6">
-      <h2 class="text-3xl lg:text-5xl text-slate-500 mb-2 uppercase tracking-tight">
-        Почему выбирают меня
-      </h2>
-      <p class="text-lg text-slate-600">
-        Не просто "делай как я", а "почему" и "как".
-
-      </p>
-    </div>
-    <div class="grid lg:grid-cols-3 gap-8 items-stretch">
-      <!-- Колонка 1: фото + текст (в стиле плашки) -->
-      <div class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-dashed border-indigo-100 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300">
-        <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
-          <img
-            src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp"
-            alt="Наталья Цыганова"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          >
-        </div>
-        <h3 class="text-lg font-bold text-slate-600 mb-2 group-hover:text-amber-600 transition-colors">
-          Наталья Цыганова
-        </h3>
-        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
-          Привет, я фудстилист и фудфотограф Наталья Цыганова.
-        </p>
-        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
-          С 2013 года я занимаюсь профессиональным стайлингом и фотосъемкой еды. Я начинала свой путь с фудфотографии. Сейчас я в основном работаю как фудстилист   над созданием образов для рекламных кампаний производителей продуктов питания и напитков.
-        </p>
-        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last pb-4">
-          Я осуществляю как подготовку продуктов, напитков и композиций на основе готовой визуализации, так и разработку образов для рекламной фото- и видео-съемки, съемки на упаковку, съемки меню и имиджевой съемки для социальных сетей, а также создаю авторские рецепты и продумываю все детали подачи блюд, максимально используя все мои знания продуктов, сочетаемости их форм, цветов, текстур и вкусов.
-        </p>
-        <p class="text-sm text-slate-600 leading-relaxed text-justify text-left-last">
-          Мои клиенты — это маркетинговые и рекламные агентства, бренды, рестораны, фермеры, шеф-повара и кондитеры, а также все те, для кого важна визуальная презентация своего продукта. Я участвую в рекламных съемках и иных проектах фуд-индустрии в качестве фудстилиста, сотрудничаю с российскими и международными рекламными агентствами, продакшн-студиями, производителями продукции и ресторанами, а также провожу мастер-классы, обучаю стайлингу блюд и дизайну еды.
-        </p>
-      </div>
-
-      <!-- Колонки 2 и 3: плашки 2×2 -->
-      <div class="lg:col-span-2 grid sm:grid-cols-2 gap-8">
-        <div
-          v-for="(benefit, index) in benefits"
-          :key="index"
-          class="group flex flex-col p-6 rounded-xl bg-slate-50 border-2 border-dashed border-indigo-100 hover:border-amber-400 hover:bg-white hover:shadow-xl transition-all duration-300"
-        >
-          <div class="rounded-lg overflow-hidden mb-3 border border-indigo-100" style="aspect-ratio: 16/9;">
-            <img
-              :src="benefit.photo"
-              :alt="benefit.title"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            >
-          </div>
-          <h3 class="text-lg font-bold text-slate-600 mb-2 group-hover:text-amber-600 transition-colors">
-            {{ benefit.title }}
-          </h3>
-          <p class="text-sm text-slate-600 leading-relaxed">
-            {{ benefit.description }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 
     <!-- 3. My photo -->
@@ -342,10 +334,10 @@ function scrollToSection(id) {
         </div>
 
         <div class="relative">
-          <button @click="carouselMy.prevSlide" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full items-center justify-center text-white hover:bg-white/40 transition-all duration-300">
+          <button @click="carouselMy.prevSlide" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full shadow-lg shadow-black/30 items-center justify-center text-white hover:bg-white/40 hover:shadow-xl hover:shadow-black/40 transition-all duration-300">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
           </button>
-          <button @click="carouselMy.nextSlide" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full items-center justify-center text-white hover:bg-white/40 transition-all duration-300">
+          <button @click="carouselMy.nextSlide" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full shadow-lg shadow-black/30 items-center justify-center text-white hover:bg-white/40 hover:shadow-xl hover:shadow-black/40 transition-all duration-300">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </button>
 
@@ -366,7 +358,7 @@ function scrollToSection(id) {
             <div
               v-for="(imgUrl, index) in carouselMy.displayImages"
               :key="`my-${index}-${imgUrl}`"
-              class="shrink-0 w-(--slide-w) aspect-3/4 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
+              class="shrink-0 w-(--slide-w) aspect-9/14 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
             >
                 <img :src="imgUrl" alt="Portfolio" class="w-full h-full object-cover">
             </div>
@@ -434,7 +426,7 @@ function scrollToSection(id) {
             </div>
 
             <div class="p-8 bg-white border-indigo-100">
-              <div class="text-3xl font-black text-slate-600 mb-6 text-right">{{ course.price }}</div>
+              <div class="text-3xl font-black text-slate-600 mb-6">{{ course.price }}</div>
               <button 
                 @click="router.push('/checkout')"
                 class="w-full py-4 px-6 font-bold rounded-lg transition-all duration-300 uppercase tracking-wide text-sm"
@@ -465,10 +457,10 @@ function scrollToSection(id) {
         </div>
 
         <div class="relative">
-          <button @click="carouselStudents.prevSlide" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full items-center justify-center text-white hover:bg-white/40 transition-all duration-300">
+          <button @click="carouselStudents.prevSlide" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full shadow-lg shadow-black/30 items-center justify-center text-white hover:bg-white/40 hover:shadow-xl hover:shadow-black/40 transition-all duration-300">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
           </button>
-          <button @click="carouselStudents.nextSlide" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full items-center justify-center text-white hover:bg-white/40 transition-all duration-300">
+          <button @click="carouselStudents.nextSlide" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20 w-12 h-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-full shadow-lg shadow-black/30 items-center justify-center text-white hover:bg-white/40 hover:shadow-xl hover:shadow-black/40 transition-all duration-300">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </button>
 
@@ -489,7 +481,7 @@ function scrollToSection(id) {
               <div
                 v-for="(imgUrl, index) in carouselStudents.displayImages"
                 :key="`student-${index}-${imgUrl}`"
-                class="shrink-0 w-(--slide-w) aspect-3/4 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
+                class="shrink-0 w-(--slide-w) aspect-9/14 rounded-xl overflow-hidden border-2 border-slate-600 shadow-lg"
               >
                 <img :src="imgUrl" alt="Student work" class="w-full h-full object-cover">
               </div>
@@ -634,4 +626,5 @@ function scrollToSection(id) {
 
   </div>
 </template>
+
 
