@@ -76,7 +76,7 @@ function togglePassword() {
           Регистрация
         </h1>
         <p class="text-slate-500 text-sm leading-relaxed">
-          Присоединяйтесь к Plate Geometry Club и начните создавать визуальный контент, за который платят бренды.
+          Получите доступ к урокам и начните создавать визуальный контент, за который платят бренды.
         </p>
       </div>
 
@@ -152,7 +152,7 @@ function togglePassword() {
             id="username"
             v-model="form.username"
             type="tel"
-            placeholder="Иван Иванов"
+            placeholder="Ваше имя"
             class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
           />
         </div>        

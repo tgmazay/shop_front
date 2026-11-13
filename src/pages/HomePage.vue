@@ -607,7 +607,7 @@ function scrollToSection(id) {
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
           <button 
-            @click="router.push('/cloub')"
+            @click="router.push('/club')"
             class="px-8 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-slate-400 transition-all duration-300 shadow-lg shadow-slate-900/50 hover:-translate-y-0.5 min-w-65"
           >
             Присоединиться

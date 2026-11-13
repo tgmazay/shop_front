@@ -1,83 +1,103 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 function handleSubmit() {
-  alert('Заявка отправлена! (Здесь будет подключение к Go API)')
+  // Здесь будет подключение к Go API
+  console.log('Заявка отправлена!')
+  alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.')
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-slate-50 font-sans text-slate-900">
     
     <!-- 1. Секция: Обо мне -->
-    <section class="border-b border-stone-100 py-16 lg:py-24">
+    <section class="py-12 lg:py-24 bg-white">
       <div class="max-w-[1600px] mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
-          <!-- Заголовок (на мобильном 2-й, на десктопе 1-й) -->
-          <div class="md:col-span-1 order-2 md:order-1">
-            <h1 class="text-2xl lg:text-3xl font-light tracking-[0.2em] uppercase text-stone-900">
+          <!-- Текст -->
+          <div class="order-2 lg:order-1 space-y-6">
+            <h1 class="text-3xl lg:text-5xl text-slate-600 uppercase tracking-tight">
               Обо мне
             </h1>
-          </div>
-          
-          <!-- Текст (на мобильном 3-й, на десктопе 2-й) -->
-          <div class="md:col-span-2 order-3 md:order-2 text-justify hyphens-auto space-y-6 text-stone-600 leading-relaxed text-sm lg:text-base font-light">
-            <p>
-              Привет, я фудстилист и фудфотограф <strong class="text-stone-900 font-medium">Наталья Цыганова</strong>.
-            </p>
-            <p>
-              С 2013 года я занимаюсь профессиональным стайлингом и фотосъемкой еды. Я начинала свой путь с фудфотографии. Сейчас я в основном работаю как фудстилист над созданием образов для рекламных кампаний производителей продуктов питания и напитков.
-            </p>
-            <p>
-              Я осуществляю как подготовку продуктов, напитков и композиций на основе готовой визуализации, так и разработку образов для рекламной фото- и видеосъемки, съемки на упаковку, съемки меню и имиджевой съемки для социальных сетей, а также создаю авторские рецепты и продумываю все детали подачи блюд, максимально используя все мои знания продуктов, сочетаемости их форм, цветов, текстур и вкусов.
-            </p>
-            <p>
-              Мои клиенты — это маркетинговые и рекламные агентства, бренды, рестораны, фермеры, шеф-повара и кондитеры, а также все те, для кого важна визуальная презентация своего продукта. Я участвую в рекламных съемках и иных проектах фуд-индустрии в качестве фудстилиста, сотрудничаю с российскими и международными рекламными агентствами, продакшн-студиями, производителями продукции и ресторанами, а также провожу мастер-классы, обучаю стайлингу блюд и дизайну еды.
-            </p>
+            <div class="space-y-4 text-lg text-slate-600 leading-relaxed text-justify">
+              <p>
+                Привет, я фудстилист и фудфотограф <span class="font-bold text-slate-700">Наталья Цыганова</span>.
+              </p>
+              <p>
+                С 2013 года я занимаюсь профессиональным стайлингом и фотосъемкой еды. Я начинала свой путь с фудфотографии. Сейчас я в основном работаю как фудстилист над созданием образов для рекламных кампаний производителей продуктов питания и напитков.
+              </p>
+              <p>
+                Я осуществляю как подготовку продуктов, напитков и композиций на основе готовой визуализации, так и разработку образов для рекламной фото- и видеосъемки, съемки на упаковку, съемки меню и имиджевой съемки для социальных сетей, а также создаю авторские рецепты и продумываю все детали подачи блюд, максимально используя все мои знания продуктов, сочетаемости их форм, цветов, текстур и вкусов.
+              </p>
+              <p>
+                Мои клиенты — это маркетинговые и рекламные агентства, бренды, рестораны, фермеры, шеф-повара и кондитеры, а также все те, для кого важна визуальная презентация своего продукта. Я участвую в рекламных съемках и иных проектах фуд-индустрии в качестве фудстилиста, сотрудничаю с российскими и международными рекламными агентствами, продакшн-студиями, производителями продукции и ресторанами, а также провожу мастер-классы, обучаю стайлингу блюд и дизайну еды.
+              </p>
+            </div>
             
-            <!-- Кнопки (зацентрованы) -->
-            <div class="flex flex-wrap justify-center gap-4 pt-6">
-              <router-link to="/portfolio" class="border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-stone-900 hover:text-white transition duration-300">
+            <div class="flex flex-wrap gap-4 pt-4">
+              <router-link 
+                to="/portfolio" 
+                class="px-6 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-slate-900/20 hover:-translate-y-0.5 uppercase tracking-wide text-sm"
+              >
                 Портфолио
               </router-link>
-              <router-link to="/services" class="border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-stone-900 hover:text-white transition duration-300">
+              <router-link 
+                to="/services" 
+                class="px-6 py-4 bg-transparent text-slate-600 font-bold rounded-lg border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition-all duration-300 uppercase tracking-wide text-sm"
+              >
                 Услуги
               </router-link>
             </div>
           </div>
-          
-          <!-- Фото (на мобильном 1-е, на десктопе 3-е) -->
-          <div class="md:col-span-1 order-1 md:order-3">
-            <div class="aspect-3/4 bg-stone-100 w-full flex items-center justify-center overflow-hidden">
-              <img src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp" class="w-full h-full object-cover" alt="Наталья Цыганова">
+
+          <!-- Фото -->
+          <div class="order-1 lg:order-2">
+            <div class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-[3/4] lg:aspect-[4/5] group">
+              <img 
+                src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp" 
+                alt="Наталья Цыганова" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              >
             </div>
           </div>
-          
+
         </div>
       </div>
     </section>
 
     <!-- 2. Секция: Геометрия тарелки -->
-    <section class="py-16 lg:py-24 bg-stone-50">
+    <section class="py-12 lg:py-24 bg-slate-50">
       <div class="max-w-[1600px] mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
-          <!-- Заголовок -->
-          <div class="md:col-span-1 order-2 md:order-1">
-            <h2 class="text-2xl lg:text-3xl font-light tracking-[0.15em] uppercase text-stone-900">
+          <!-- Фото -->
+          <div class="order-1">
+            <div class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-[3/4] lg:aspect-[4/5] group">
+              <img 
+                src="https://static.tildacdn.com/tild6436-6530-4262-b466-366663373464/Studio_Session-10175.jpg" 
+                alt="Геометрия тарелки" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              >
+            </div>
+          </div>
+
+          <!-- Текст -->
+          <div class="order-2 space-y-6">
+            <h2 class="text-3xl lg:text-5xl text-slate-600 uppercase tracking-tight">
               Геометрия тарелки
             </h2>
-          </div>
-          
-          <!-- Текст -->
-          <div class="md:col-span-2 order-3 md:order-2 space-y-6">
-            <div class="text-justify hyphens-auto space-y-4 text-stone-600 leading-relaxed text-sm lg:text-base font-light">
+            <div class="space-y-4 text-lg text-slate-600 leading-relaxed text-justify">
               <p>
                 «Геометрия тарелки» — мой авторский метод, которым я смогла описать созидательный интуитивный навык конструкциями математической базы и композиционных правил.
               </p>
               <p>
                 Благодаря набору своих навыков и интересов, а именно техническому образованию, ученой степени в физико-математических науках, гуманитарному складу ума и художественному видению, я смогла сформулировать и оформить простой и доступный каждому способ обучения процессу стилизации еды.
               </p>
-              <p class="text-stone-900 font-medium italic">
+              <p class="text-xl font-bold text-amber-600 italic leading-relaxed border-l-4 border-amber-500 pl-4 my-6">
                 Облечь в форму бесформенное, разложить сложное в последовательность простых правил, сделать видимым неочевидное.
               </p>
               <p>
@@ -85,124 +105,209 @@ function handleSubmit() {
               </p>
             </div>
             
-            <!-- Кнопки (зацентрованы) -->
-            <div class="flex flex-wrap justify-center gap-4 pt-6">
-              <router-link to="/lessons" class="border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-stone-900 hover:text-white transition duration-300">
+            <div class="flex flex-wrap gap-4 pt-4">
+              <router-link 
+                to="/lessons" 
+                class="px-6 py-4 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-slate-900/20 hover:-translate-y-0.5 uppercase tracking-wide text-sm"
+              >
                 К урокам
               </router-link>
-              <router-link to="/training" class="border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-stone-900 hover:text-white transition duration-300">
+              <router-link 
+                to="/training" 
+                class="px-6 py-4 bg-transparent text-slate-600 font-bold rounded-lg border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition-all duration-300 uppercase tracking-wide text-sm"
+              >
                 Персональные занятия
               </router-link>
             </div>
           </div>
-          
-          <!-- Фото -->
-          <div class="md:col-span-1 order-1 md:order-3">
-            <div class="aspect-3/4 bg-stone-200 w-full flex items-center justify-center overflow-hidden">
-              <img src="https://static.tildacdn.com/tild6436-6530-4262-b466-366663373464/Studio_Session-10175.jpg" class="w-full h-full object-cover" alt="Геометрия тарелки">
-            </div>
-          </div>
-          
+
         </div>
       </div>
     </section>
 
     <!-- 3. Секция: Plate Geometry Club -->
-    <section class="py-16 lg:py-24 border-b border-stone-100">
+    <section class="py-12 lg:py-24 bg-white">
       <div class="max-w-[1600px] mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
-          
-          <!-- Заголовок -->
-          <div class="md:col-span-1 order-2 md:order-1">
-            <h2 class="text-2xl lg:text-3xl font-light tracking-[0.15em] uppercase text-stone-900">
-              Plate Geometry Club
-            </h2>
-          </div>
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
           <!-- Текст -->
-          <div class="md:col-span-2 order-3 md:order-2 space-y-8">
-            <p class="text-justify hyphens-auto text-stone-600 leading-relaxed text-sm lg:text-base font-light">
+          <div class="order-2 lg:order-1 space-y-6">
+            <h2 class="text-3xl lg:text-5xl text-slate-600 uppercase tracking-tight">
+              Plate Geometry Club
+            </h2>
+            <p class="text-lg text-slate-600 leading-relaxed text-justify">
               Plate Geometry Club — пространство, в котором через практические техники и уроки, соединенные с теоретическими вкраплениями, мы глубоко проникаем в композиционную суть стилизации блюд.
             </p>
-            <ul class="space-y-4 text-stone-600 text-sm font-light">
-              <li class="flex items-start gap-3">
-                <span class="text-stone-400 mt-0.5">✦</span>
-                <span>пошаговые техники фуд‑стайлинга</span>
+            
+            <ul class="space-y-4 pt-2">
+              <li class="flex items-start gap-4 text-slate-700 font-medium">
+                <svg class="w-6 h-6 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Пошаговые техники фуд‑стайлинга</span>
               </li>
-              <li class="flex items-start gap-3">
-                <span class="text-stone-400 mt-0.5">✦</span>
-                <span>композиционные идеи и практические лайфхаки</span>
+              <li class="flex items-start gap-4 text-slate-700 font-medium">
+                <svg class="w-6 h-6 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Композиционные идеи и практические лайфхаки</span>
               </li>
-              <li class="flex items-start gap-3">
-                <span class="text-stone-400 mt-0.5">✦</span>
-                <span>прямые эфиры и подборки для вдохновения</span>
+              <li class="flex items-start gap-4 text-slate-700 font-medium">
+                <svg class="w-6 h-6 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Прямые эфиры и подборки для вдохновения</span>
               </li>
-              <li class="flex items-start gap-3">
-                <span class="text-stone-400 mt-0.5">✦</span>
-                <span>ответы на ваши вопросы и материалы для повышения уровня визуального мастерства</span>
+              <li class="flex items-start gap-4 text-slate-700 font-medium">
+                <svg class="w-6 h-6 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Ответы на ваши вопросы и материалы для повышения уровня визуального мастерства</span>
               </li>
             </ul>
-            <p class="text-stone-500 text-xs tracking-widest uppercase pt-2">
+
+            <p class="text-sm text-slate-500 uppercase tracking-widest font-bold pt-4">
               Подписка открывает доступ к закрытому клубу, где идеи становятся воплощенной эстетикой.
             </p>
-            
-            <div class="flex justify-center pt-4">
-              <router-link to="/club" class="inline-block border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-stone-900 hover:text-white transition duration-300">
+
+            <div class="pt-4">
+              <router-link 
+                to="/club" 
+                class="inline-block px-8 py-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-500 transition-all duration-300 shadow-lg shadow-amber-900/20 hover:-translate-y-0.5 uppercase tracking-wide text-sm"
+              >
                 Вступить в клуб
               </router-link>
             </div>
           </div>
-          
+
           <!-- Фото -->
-          <div class="md:col-span-1 order-1 md:order-3">
-            <div class="aspect-3/4 bg-stone-100 w-full flex items-center justify-center overflow-hidden">
-              <img src="https://optim.tildacdn.com/tild6130-3430-4334-b332-336431383832/-/format/webp/Plate_Geometry_Club_.jpg.webp" class="w-full h-full object-cover" alt="Plate Geometry Club">
+          <div class="order-1 lg:order-2">
+            <div class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-[3/4] lg:aspect-[4/5] group">
+              <img 
+                src="https://optim.tildacdn.com/tild6130-3430-4334-b332-336431383832/-/format/webp/Plate_Geometry_Club_.jpg.webp" 
+                alt="Plate Geometry Club" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              >
             </div>
           </div>
-          
+
         </div>
       </div>
     </section>
 
     <!-- 4. Секция: Форма заявки -->
-    <section class="py-16 lg:py-24 bg-stone-50">
+    <section class="py-12 lg:py-24 bg-slate-50">
       <div class="max-w-2xl mx-auto px-6">
-        <div class="bg-white p-8 lg:p-12 border border-stone-100 shadow-sm">
-          <h3 class="text-xl font-light tracking-[0.15em] uppercase text-stone-900 mb-8 text-center">Оставить заявку</h3>
-          <form class="space-y-6" @submit.prevent="handleSubmit">
-            <div>
-              <label class="block text-xs font-medium uppercase tracking-widest text-stone-500 mb-2">Имя</label>
-              <input type="text" class="w-full border-b border-stone-200 py-2 text-stone-900 focus:outline-none focus:border-stone-900 transition bg-transparent placeholder-stone-300" placeholder="Ваше имя">
+        <div class="bg-white rounded-2xl shadow-2xl border border-indigo-100 p-8 sm:p-10 space-y-8">
+          
+          <div class="text-center space-y-3">
+            <h3 class="text-3xl font-black text-slate-600 uppercase tracking-tight">
+              Оставить заявку
+            </h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Заполните форму ниже, и я свяжусь с вами для обсуждения деталей
+            </p>
+          </div>
+
+          <form @submit.prevent="handleSubmit" class="space-y-5">
+            
+            <!-- Имя -->
+            <div class="space-y-1.5">
+              <label for="name" class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Имя</label>
+              <input
+                id="name"
+                type="text"
+                required
+                placeholder="Ваше имя"
+                class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
+              />
             </div>
-            <div>
-              <label class="block text-xs font-medium uppercase tracking-widest text-stone-500 mb-2">E-mail</label>
-              <input type="email" class="w-full border-b border-stone-200 py-2 text-stone-900 focus:outline-none focus:border-stone-900 transition bg-transparent placeholder-stone-300" placeholder="your@email.com">
+
+            <!-- Email -->
+            <div class="space-y-1.5">
+              <label for="email" class="block text-xs font-bold text-slate-600 uppercase tracking-wider">E-mail</label>
+              <input
+                id="email"
+                type="email"
+                required
+                placeholder="your@email.com"
+                class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
+              />
             </div>
-            <div>
-              <label class="block text-xs font-medium uppercase tracking-widest text-stone-500 mb-2">Телефон</label>
-              <input type="tel" class="w-full border-b border-stone-200 py-2 text-stone-900 focus:outline-none focus:border-stone-900 transition bg-transparent placeholder-stone-300" placeholder="+7 (___) ___-__-__">
+
+            <!-- Телефон -->
+            <div class="space-y-1.5">
+              <label for="phone" class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Телефон</label>
+              <input
+                id="phone"
+                type="tel"
+                required
+                placeholder="+7 (999) 000-00-00"
+                class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
+              />
             </div>
-            <div>
-              <label class="block text-xs font-medium uppercase tracking-widest text-stone-500 mb-2">Интересующая услуга</label>
-              <textarea rows="3" class="w-full border-b border-stone-200 py-2 text-stone-900 focus:outline-none focus:border-stone-900 transition bg-transparent resize-none placeholder-stone-300" placeholder="фудфотосъемка, фудстайлинг, обучение: курсы, вебинары, видеоуроки, воркшопы или другое"></textarea>
+
+            <!-- Интересующая услуга -->
+            <div class="space-y-1.5">
+              <label for="service" class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Интересующая услуга</label>
+              <textarea
+                id="service"
+                rows="3"
+                placeholder="фудфотосъемка, фудстайлинг, обучение: курсы, вебинары, видеоуроки, воркшопы или другое"
+                class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400 resize-none"
+              ></textarea>
             </div>
-            <div class="space-y-3 pt-4">
-              <label class="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" required class="mt-1 accent-stone-900">
-                <span class="text-[11px] text-stone-500 leading-relaxed group-hover:text-stone-900 transition">Я согласна(ен) с <a href="#" class="underline decoration-stone-300 hover:decoration-stone-900">политикой конфиденциальности</a></span>
+
+            <!-- Чекбоксы -->
+            <div class="space-y-4 pt-2">
+              <label class="flex items-start gap-3 cursor-pointer select-none group">
+                <div class="relative shrink-0 mt-0.5">
+                  <input type="checkbox" required class="peer sr-only" />
+                  <div class="w-5 h-5 rounded border-2 border-slate-300 bg-white transition-all duration-300 peer-checked:border-amber-500 peer-checked:bg-amber-500 group-hover:border-slate-400"></div>
+                  <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-sm text-slate-600 leading-relaxed group-hover:text-slate-800 transition">
+                  Я согласен(-на) с <a href="#" class="underline decoration-slate-300 hover:decoration-amber-500 transition-colors">политикой конфиденциальности</a>
+                </span>
               </label>
-              <label class="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" required class="mt-1 accent-stone-900">
-                <span class="text-[11px] text-stone-500 leading-relaxed group-hover:text-stone-900 transition">Я согласна(ен) на обработку персональных данных</span>
+
+              <label class="flex items-start gap-3 cursor-pointer select-none group">
+                <div class="relative shrink-0 mt-0.5">
+                  <input type="checkbox" required class="peer sr-only" />
+                  <div class="w-5 h-5 rounded border-2 border-slate-300 bg-white transition-all duration-300 peer-checked:border-amber-500 peer-checked:bg-amber-500 group-hover:border-slate-400"></div>
+                  <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-sm text-slate-600 leading-relaxed group-hover:text-slate-800 transition">
+                  Я согласен(-на) на обработку персональных данных
+                </span>
               </label>
-              <label class="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" class="mt-1 accent-stone-900">
-                <span class="text-[11px] text-stone-500 leading-relaxed group-hover:text-stone-900 transition">Я согласна(ен) на рекламную рассылку</span>
+
+              <label class="flex items-start gap-3 cursor-pointer select-none group">
+                <div class="relative shrink-0 mt-0.5">
+                  <input type="checkbox" class="peer sr-only" />
+                  <div class="w-5 h-5 rounded border-2 border-slate-300 bg-white transition-all duration-300 peer-checked:border-amber-500 peer-checked:bg-amber-500 group-hover:border-slate-400"></div>
+                  <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-sm text-slate-600 leading-relaxed group-hover:text-slate-800 transition">
+                  Я согласен(-на) на рекламную рассылку
+                </span>
               </label>
             </div>
-            <button type="submit" class="w-full border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest py-4 hover:bg-stone-900 hover:text-white transition duration-300 mt-6">
+
+            <!-- Кнопка отправки -->
+            <button
+              type="submit"
+              class="w-full py-4 px-6 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-slate-900/20 hover:-translate-y-0.5 uppercase tracking-wide text-sm mt-4"
+            >
               Оставить заявку
             </button>
+
           </form>
         </div>
       </div>
