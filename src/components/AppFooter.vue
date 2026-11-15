@@ -1,3 +1,7 @@
+<script setup>
+import { LEGAL_DOCS } from '@/constants/legal'
+</script>
+
 <template>
   <footer>
     <div
@@ -132,10 +136,27 @@
       <!-- КОЛОНКА 4: ИНФОРМАЦИЯ -->
       <div class="space-y-2">
         <h4 class="font-medium text-stone-900 uppercase tracking-wider mb-3">Информация</h4>
-        <p><a href="#" class="hover:text-stone-900 transition">Главная</a></p>
-        <p><a href="#" class="hover:text-stone-900 transition">Рассчитать стоимость услуг</a></p>
-        <p><a href="#" class="hover:text-stone-900 transition">Политика конфиденциальности</a></p>
-        <p><a href="#" class="hover:text-stone-900 transition">Публичная оферта</a></p>
+        <p><RouterLink to="/" class="hover:text-stone-900 transition">Главная</RouterLink></p>
+        <p>
+          <RouterLink to="/club" class="hover:text-stone-900 transition"
+            >Рассчитать стоимость услуг</RouterLink
+          >
+        </p>
+        <p>
+          <RouterLink :to="LEGAL_DOCS.privacy" class="hover:text-stone-900 transition"
+            >Политика в отношении обработки ПД</RouterLink
+          >
+        </p>
+        <p>
+          <RouterLink :to="LEGAL_DOCS.consent" class="hover:text-stone-900 transition"
+            >Согласие на обработку ПД</RouterLink
+          >
+        </p>
+        <p>
+          <RouterLink :to="LEGAL_DOCS.terms" class="hover:text-stone-900 transition"
+            >Пользовательское соглашение</RouterLink
+          >
+        </p>
       </div>
     </div>
   </footer>

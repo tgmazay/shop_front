@@ -8,6 +8,7 @@ import ForgotPasswordPage from '@/pages/ForgotPasswordPage.vue' // Провер�
 import ChangePasswordPage from '@/pages/ChangePasswordPage.vue' // Проверка алиаса @
 import LessonsPage from '@/pages/LessonsPage.vue' // Проверка алиаса @
 import YandexVerificationPage from '@/pages/YandexVerificationPage.vue' // Проверка алиаса @
+import LegalDocumentPage from '@/pages/LegalDocumentPage.vue' // Проверка алиаса @
 
 const routes = [
   { path: '/', component: HomePage },
@@ -19,6 +20,7 @@ const routes = [
   { path: '/changepassword', component: ChangePasswordPage },
   { path: '/lessons', component: LessonsPage },
   { path: '/auth/yandex/verification', component: YandexVerificationPage },
+  { path: '/docs/:slug', name: 'legal-document', component: LegalDocumentPage },
 ]
 
 export default createRouter({
