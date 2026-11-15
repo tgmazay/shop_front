@@ -19,7 +19,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/api/auth/yandex', {
+    const response = await fetch('/backend/api/auth/yandex', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -36,9 +36,7 @@ const fetchLessons = async (isLoadMore = false) => {
   error.value = null
 
   try {
-    const response = await fetch(
-      `http://192.168.1.124:8000/lessons?page=${page.value}&pageSize=${pageSize.value}`,
-    )
+    const response = await fetch(`/backend/lessons?page=${page.value}&pageSize=${pageSize.value}`)
     if (!response.ok) throw new Error('Не удалось загрузить уроки')
 
     const data = await response.json()
@@ -54,6 +52,7 @@ const fetchLessons = async (isLoadMore = false) => {
     }
   } catch (err) {
     console.error('Ошибка при загрузке уроков:', err)
+    alert(err)
     error.value = 'Произошла ошибка при загрузке. Пожалуйста, попробуйте позже.'
   } finally {
     loading.value = false

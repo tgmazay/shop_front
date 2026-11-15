@@ -6,9 +6,7 @@ const router = useRouter()
 const handleYandexLogin = () => {
   // Читаем переменные из .env файла
   const clientId = import.meta.env.VITE_YANDEX_CLIENT_ID
-  const redirectUri = encodeURIComponent(
-    import.meta.env.VITE_YANDEX_REDIRECT_URI || 'http://localhost:3000/auth/yandex/callback',
-  )
+  const redirectUri = encodeURIComponent(import.meta.env.VITE_YANDEX_REDIRECT_URI)
 
   if (!clientId) {
     console.error('VITE_YANDEX_CLIENT_ID не найден в переменных окружения!')
