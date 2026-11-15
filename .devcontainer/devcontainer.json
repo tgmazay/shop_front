@@ -9,7 +9,12 @@
         "ritwickdey.LiveServer",
         "bradlc.vscode-tailwindcss",
         "formulahendry.auto-rename-tag",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "formulahendry.auto-rename-tag",
+        "bradlc.vscode-tailwindcss"
       ],
       "settings": {
         "workbench.colorTheme": "Dark Modern",
@@ -25,7 +30,11 @@
       }
     }
   },
-  "forwardPorts": [5500],
+  "appPort": ["0.0.0.0:5173:5173"],
+  "portsAttributes": {
+    "5173": { "onAutoForward": "ignore" }
+  },
   "postCreateCommand": "echo 'Среда чистого HTML + JS готова!'",
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "runArgs": ["--env-file", ".env"]
 }
