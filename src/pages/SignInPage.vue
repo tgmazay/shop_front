@@ -90,9 +90,14 @@ function socialLogin(provider) {
           class="w-full flex items-center gap-4 py-4 px-5 bg-white border-2 border-slate-200 rounded-xl font-bold text-sm text-slate-700 hover:border-[#FC3F1D] hover:bg-[#FC3F1D]/5 transition-all duration-300 group"
         >
           <div
-            class="shrink-0 w-10 h-10 rounded-lg bg-[#FC3F1D] text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-110 transition-transform"
+            class="shrink-0 w-10 h-10 rounded-lg bg-[#FC3F1D] text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"
           >
-            Я
+            <svg class="w-8 h-8" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <path
+                fill="#fff"
+                d="M11.823 14h-1.748V5.354h-.778c-1.428 0-2.176.713-2.176 1.779 0 1.209.516 1.769 1.583 2.482l.879.593-2.527 3.79h-1.88l2.275-3.384C6.143 9.68 5.407 8.769 5.407 7.23 5.407 5.308 6.747 4 9.284 4h2.527v9.997h.012z"
+              />
+            </svg>
           </div>
           <div class="flex flex-col items-start flex-1">
             <span class="text-base font-black leading-tight">Яндекс ID</span>
@@ -124,7 +129,7 @@ function socialLogin(provider) {
           <div
             class="shrink-0 w-10 h-10 rounded-lg bg-[#0077FF] text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"
           >
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M12.79 16.14c-5.08 0-8.04-3.48-8.16-9.27h2.56c.08 4.24 1.96 6.04 3.45 6.42V6.87h2.41v3.66c1.47-.16 3.01-1.85 3.53-3.66h2.41a7.4 7.4 0 01-2.86 4.63 7.7 7.7 0 013.18 4.64h-2.65c-.47-1.47-1.65-2.61-3.61-2.77v2.77h-.26z"
               />
@@ -162,7 +167,7 @@ function socialLogin(provider) {
           >
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
               <path
-                d="M21.94 4.66 2.92 12.14c-1.1.43-1.09 1.64-.01 2.01l4.85 1.51 1.13 3.5c.18.5.46.62.83.63.37.01.54-.17.77-.37l2.32-2.26 4.82 3.56c.89.49 1.53.24 1.75-.82l3.16-14.9c.32-1.3-.5-1.9-1.64-1.34zM9.08 14.3l8.4-5.3c.38-.24.72-.11.44.14l-7.2 6.51-.3 2.85-1.34-4.2z"
+                d="m 2.7525282,10.838873 c -1.1,0.43 -1.09,1.64 -0.01,2.01 l 4.85,1.51 1.13,3.5 c 0.18,0.5 0.46,0.62 0.83,0.63 0.37,0.01 0.5399998,-0.17 0.7699998,-0.37 l 2.32,-2.26 4.82,3.56 c 0.89,0.49 1.53,0.24 1.75,-0.82 L 21.548051,6.9194847 c 0.32,-1.3 -0.39694,-1.7325282 -1.64,-1.34 z m 6.16,2.16 6.7768118,-3.5222222 c 0.38,-0.24 0.72,-0.11 0.44,0.14 l -5.576812,4.7322222 -0.3,2.85 z"
               />
             </svg>
           </div>
