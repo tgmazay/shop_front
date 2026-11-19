@@ -20,10 +20,18 @@ export default defineConfig({
       usePolling: true, // Гарантирует работу автообновления страниц (HMR) внутри Docker на Windows
     },
     proxy: {
-      '/backend': {
+      // Бэкенд уже отдаёт API по /api, поэтому путь не переписываем:
+      // Path=/api/auth у refresh-cookie должен совпадать с адресом запроса.
+      '/api': {
         target: 'http://192.168.1.124:8000', // Ваш Go-сервер
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/backend/, ''), // Раскомментируйте, если на бэке нет префикса /backend
+      },
+      // Каталог уроков на бэкенде — /lessons. В dev он идёт через /backend,
+      // чтобы не конфликтовать с одноимённым фронтенд-маршрутом /lessons.
+      '/backend': {
+        target: 'http://192.168.1.124:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/backend/, ''),
       },
     },
   },

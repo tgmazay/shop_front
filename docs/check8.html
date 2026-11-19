@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Согласие на ПДн + Каллиграфическая галочка</title>
+<style>
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.btn-bot {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.btn-bot:hover {
+  background: #c7d2fe;
+}
+body {
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+.card {
+  background: #ffffff;
+  padding: 32px 28px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(67, 83, 104, 0.08);
+  width: 380px;
+  text-align: center;
+}
+h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #435368;
+}
+p.subtitle {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+}
+p.subtitle a {
+  color: #435368;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 145px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  margin-bottom: 18px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+  touch-action: none;
+}
+.canvas-wrapper.drawing {
+  border-color: #435368;
+  background: #ffffff;
+}
+.canvas-wrapper.valid {
+  border-style: solid;
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+.ghost-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.14;
+  transition: opacity 0.2s;
+}
+.canvas-wrapper.has-ink .ghost-check {
+  opacity: 0;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+}
+button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-clear {
+  background: #f1f5f9;
+  color: #435368;
+}
+.btn-clear:hover {
+  background: #e2e8f0;
+}
+.btn-submit {
+  background: #435368;
+  color: #ffffff;
+  flex: 1;
+}
+.btn-submit:hover {
+  background: #334155;
+}
+.status {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 20px;
+}
+.status.success { color: #059669; }
+.status.error { color: #dc2626; }
+.stats {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>Согласие на обработку данных</h2>
+  <p class="subtitle">
+    Нарисуйте <b>зелёную галочку ✓</b> кистью в поле ниже, принимая
+    <a href="#" onclick="return false;">политику конфиденциальности</a>
+  </p>
+  <div class="canvas-wrapper" id="canvasBox">
+    <div class="ghost-check">
+      <svg width="96" height="96" viewBox="0 0 100 100" fill="none">
+        <path d="M 22 52 L 42 74 L 80 26" stroke="#10b981" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <canvas id="signCanvas"></canvas>
+  </div>
+  <div class="controls">
+    <button class="btn-clear" id="clearBtn" type="button">↻ Стереть</button>
+    <button class="btn-bot" id="simBotBtn" type="button" title="Симуляция человеческого штриха">🤖 Тест</button>
+    <button class="btn-submit" id="submitBtn" type="button">Подтвердить</button>
+  </div>
+  <div class="status" id="status"></div>
+  <div class="stats" id="stats"></div>
+</div>
+
+<script>
+const box = document.getElementById('canvasBox');
+const canvas = document.getElementById('signCanvas');
+const ctx = canvas.getContext('2d');
+const statusEl = document.getElementById('status');
+const statsEl = document.getElementById('stats');
+const MIN_WIDTH = 3.2;
+const MAX_WIDTH = 10.5;
+const BASE_BLUR = 4.5;
+
+// === НОВОЕ: Флаг для теста (разрешает программный ввод только через кнопку "Тест") ===
+let allowBotTest = false;
+
+// === НОВОЕ: Время загрузки страницы ===
+const pageLoadTime = performance.now();
+
+// === НОВОЕ: Счётчик mousemove до начала рисования (только десктоп) ===
+let preMoveCount = 0;
+const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+if (!isMobile) {
+  document.addEventListener('mousemove', function(e) {
+    if (!isDrawing) preMoveCount++;
+  }, { passive: true });
+}
+
+// === НОВОЕ: Адаптивные пороги для десктопа и мобила ===
+const CONFIG = {
+  desktop: {
+    minPageTime: 2000,       // Минимум 2 сек на странице
+    minPreMoves: 5,          // Минимум 5 mousemove до pointerdown
+    minDuration: 120,        // Минимальное время рисования (мс)
+    minPoints: 10,           // Минимальное количество точек
+    armLength: 12,           // Минимальная длина левой "руки" галочки
+    rightArmLength: 18,      // Минимальная длина правой "руки"
+    leftToRight: 20,         // Минимальное движение слева направо
+    stdDevMin: 1.2           // Минимальная дисперсия таймингов
+  },
+  mobile: {
+    minPageTime: 1500,
+    minPreMoves: 0,          // На мобиле нет mousemove
+    minDuration: 150,
+    minPoints: 8,
+    armLength: 8,
+    rightArmLength: 12,
+    leftToRight: 15,
+    stdDevMin: 1.0
+  }
+};
+
+const cfg = isMobile ? CONFIG.mobile : CONFIG.desktop;
+
+console.log('[captcha] Device:', isMobile ? 'mobile' : 'desktop');
+console.log('[captcha] Config:', cfg);
+
+let isDrawing = false;
+let points = new Array();
+let recentTrail = new Array();
+let strokeStartTime = 0;
+let lastPoint = null;
+let lastWidth = MAX_WIDTH * 0.75;
+let inertiaAnimId = null;
+
+function resizeCanvas() {
+  const rect = box.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+}
+
+function clearCanvas() {
+  if (inertiaAnimId) {
+    cancelAnimationFrame(inertiaAnimId);
+    inertiaAnimId = null;
+  }
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+  points = new Array();
+  recentTrail = new Array();
+  lastPoint = null;
+  lastWidth = MAX_WIDTH * 0.75;
+  box.classList.remove('has-ink', 'valid', 'drawing');
+  statusEl.textContent = '';
+  statusEl.className = 'status';
+  statsEl.textContent = '';
+}
+
+function drawBrushSegment(p1, p2, w1, w2, blur1, blur2, alpha1, alpha2) {
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const dist = Math.hypot(dx, dy);
+  const steps = Math.max(1, Math.ceil(dist / 1.2));
+  ctx.save();
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const x = p1.x + dx * t;
+    const y = p1.y + dy * t;
+    const w = w1 + (w2 - w1) * t;
+    const blur = blur1 + (blur2 - blur1) * t;
+    const alpha = alpha1 + (alpha2 - alpha1) * t;
+    ctx.shadowColor = 'rgba(16, 185, 129, ' + (alpha * 0.55).toFixed(3) + ')';
+    ctx.shadowBlur = blur;
+    ctx.fillStyle = 'rgba(16, 185, 129, ' + alpha.toFixed(3) + ')';
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(0.2, w / 2), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function computeExtrapolationParams() {
+  const len = recentTrail.length;
+  if (len < 2) return null;
+  let weightedVx = 0;
+  let weightedVy = 0;
+  let totalWeight = 0;
+  for (let i = 1; i < len; i++) {
+    const a = recentTrail.at(i - 1);
+    const b = recentTrail.at(i);
+    const dt = Math.max(1, b.t - a.t);
+    const weight = i;
+    weightedVx += ((b.x - a.x) / dt) * weight;
+    weightedVy += ((b.y - a.y) / dt) * weight;
+    totalWeight += weight;
+  }
+  const vx = weightedVx / totalWeight;
+  const vy = weightedVy / totalWeight;
+  const speedMag = Math.hypot(vx, vy);
+  if (speedMag < 0.15) return null;
+  let angularVel = 0;
+  if (len >= 3) {
+    let angleDiffSum = 0;
+    let angleCount = 0;
+    for (let i = 2; i < len; i++) {
+      const p0 = recentTrail.at(i - 2);
+      const p1 = recentTrail.at(i - 1);
+      const p2 = recentTrail.at(i);
+      const ang1 = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+      const ang2 = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+      let diff = ang2 - ang1;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      angleDiffSum += diff;
+      angleCount++;
+    }
+    const rawAngVel = angleDiffSum / angleCount;
+    angularVel = Math.max(-0.09, Math.min(0.09, rawAngVel));
+  }
+  return {
+    angle: Math.atan2(vy, vx),
+    speedPerFrame: Math.min(9.5, speedMag * 7),
+    angularVel: angularVel
+  };
+}
+
+function runExtrapolatedTail() {
+  if (!lastPoint) return;
+  const params = computeExtrapolationParams();
+  if (!params) return;
+  const power = Math.max(0, Math.min(1, (params.speedPerFrame - 1.05) / 7.5));
+  let currX = lastPoint.x;
+  let currY = lastPoint.y;
+  let currAngle = params.angle;
+  let currSpeed = params.speedPerFrame;
+  let currAngVel = params.angularVel;
+  const startW = lastWidth;
+  const minEndWidth = 1.6 * (1 - power) + 0.1 * power;
+  const maxEndBlur = BASE_BLUR + 0.8 + power * 2.2;
+  const totalDurationMs = 75 + power * 95;
+  const speedDecayPerFrame = 0.66;
+  let prevW = startW;
+  let prevBlur = BASE_BLUR;
+  let prevAlpha = 0.92;
+  const animStart = performance.now();
+  let lastFrameTime = animStart;
+  function step(now) {
+    const elapsed = now - animStart;
+    const timeScale = Math.min(2, (now - lastFrameTime) / 16.67);
+    lastFrameTime = now;
+    if (elapsed >= totalDurationMs || prevAlpha <= 0.04 || currSpeed * timeScale < 0.35) {
+      inertiaAnimId = null;
+      return;
+    }
+    const progress = Math.min(1, elapsed / totalDurationMs);
+    const taperCurve = 1 - Math.pow(progress, 1.75);
+    const nextW = minEndWidth + (startW - minEndWidth) * taperCurve;
+    const blurCurve = Math.pow(progress, 1.4);
+    const nextBlur = BASE_BLUR + (maxEndBlur - BASE_BLUR) * blurCurve;
+    const nextAlpha = 0.92 * (1 - Math.pow(progress, 1.35));
+    currAngle += currAngVel * timeScale;
+    const nextX = currX + Math.cos(currAngle) * currSpeed * timeScale;
+    const nextY = currY + Math.sin(currAngle) * currSpeed * timeScale;
+    currSpeed *= Math.pow(speedDecayPerFrame, timeScale);
+    currAngVel *= Math.pow(0.85, timeScale);
+    drawBrushSegment(
+      { x: currX, y: currY },
+      { x: nextX, y: nextY },
+      prevW,
+      nextW,
+      prevBlur,
+      nextBlur,
+      prevAlpha,
+      nextAlpha
+    );
+    currX = nextX;
+    currY = nextY;
+    prevW = nextW;
+    prevBlur = nextBlur;
+    prevAlpha = nextAlpha;
+    inertiaAnimId = requestAnimationFrame(step);
+  }
+  inertiaAnimId = requestAnimationFrame(step);
+}
+
+// === НОВОЕ: Проверка isTrusted + время жизни страницы + mousemove ===
+canvas.addEventListener('pointerdown', function(e) {
+  console.log('[captcha] pointerdown | isTrusted:', e.isTrusted, 'allowBotTest:', allowBotTest);
+  
+  // 1. Проверка isTrusted (главная защита от JS-ботов)
+  if (!e.isTrusted && !allowBotTest) {
+    console.log('[captcha] BLOCKED: untrusted event');
+    statusEl.textContent = '✕ Обнаружен программный ввод.';
+    statusEl.className = 'status error';
+    return;
+  }
+  
+  // 2. Проверка времени жизни страницы
+  const timeSinceLoad = performance.now() - pageLoadTime;
+  if (timeSinceLoad < cfg.minPageTime) {
+    console.log('[captcha] BLOCKED: page too young', timeSinceLoad, 'ms');
+    statusEl.textContent = '✕ Слишком быстро. Подождите немного.';
+    statusEl.className = 'status error';
+    return;
+  }
+  
+  // 3. Проверка mousemove до pointerdown (только десктоп)
+  if (!isMobile && preMoveCount < cfg.minPreMoves) {
+    console.log('[captcha] BLOCKED: not enough mousemove events', preMoveCount);
+    statusEl.textContent = '✕ Подозрительная активность.';
+    statusEl.className = 'status error';
+    return;
+  }
+  
+  console.log('[captcha] PASSED pre-checks');
+  
+  if (points.length > 0) {
+    clearCanvas();
+  }
+  isDrawing = true;
+  strokeStartTime = Date.now();
+  box.classList.add('drawing', 'has-ink');
+  const rect = canvas.getBoundingClientRect();
+  const pos = {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+  const currentPoint = { x: pos.x, y: pos.y, t: 0 };
+  points.push({ x: Math.round(pos.x), y: Math.round(pos.y), t: 0 });
+  recentTrail.push(currentPoint);
+  lastPoint = currentPoint;
+  lastWidth = MAX_WIDTH * 0.75;
+  drawBrushSegment(currentPoint, currentPoint, lastWidth, lastWidth, BASE_BLUR, BASE_BLUR, 1, 1);
+});
+
+canvas.addEventListener('pointermove', function(e) {
+  if (!isDrawing || !lastPoint) return;
+  const rect = canvas.getBoundingClientRect();
+  const pos = {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+  if (pos.x < 0 || pos.x > rect.width || pos.y < 0 || pos.y > rect.height) {
+    stopDrawing();
+    return;
+  }
+  const now = Date.now() - strokeStartTime;
+  const currentPoint = { x: pos.x, y: pos.y, t: now };
+  const dt = Math.max(1, currentPoint.t - lastPoint.t);
+  const dist = Math.hypot(currentPoint.x - lastPoint.x, currentPoint.y - lastPoint.y);
+  if (dist < 0.5) return;
+  const speed = dist / dt;
+  const normalizedSpeed = Math.min(1, speed / 1.4);
+  const targetWidth = MAX_WIDTH - normalizedSpeed * (MAX_WIDTH - MIN_WIDTH);
+  const smoothedWidth = lastWidth * 0.7 + targetWidth * 0.3;
+  drawBrushSegment(lastPoint, currentPoint, lastWidth, smoothedWidth, BASE_BLUR, BASE_BLUR, 1, 1);
+  points.push({ x: Math.round(pos.x), y: Math.round(pos.y), t: now });
+  recentTrail.push(currentPoint);
+  if (recentTrail.length > 4) {
+    recentTrail.shift();
+  }
+  lastPoint = currentPoint;
+  lastWidth = smoothedWidth;
+});
+
+function stopDrawing() {
+  if (!isDrawing) return;
+  isDrawing = false;
+  box.classList.remove('drawing');
+  const timeSinceLastMove = (Date.now() - strokeStartTime) - (lastPoint ? lastPoint.t : 0);
+  if (timeSinceLastMove < 80) {
+    runExtrapolatedTail();
+  }
+}
+
+canvas.addEventListener('pointerup', stopDrawing);
+canvas.addEventListener('pointercancel', stopDrawing);
+canvas.addEventListener('pointerleave', stopDrawing);
+
+function verifyCheckmark() {
+  console.log('[captcha] verifyCheckmark | points:', points.length, 'allowBotTest:', allowBotTest);
+  
+  if (points.length < cfg.minPoints) {
+    statusEl.textContent = '✕ Слишком короткий штрих. Нарисуйте галочку целиком.';
+    statusEl.className = 'status error';
+    return;
+  }
+  const first = points.at(0);
+  const last = points.at(points.length - 1);
+  const durationMs = last.t - first.t;
+  if (durationMs < cfg.minDuration) {
+    statusEl.textContent = '✕ Нарисовано слишком быстро для человека (' + durationMs + ' мс).';
+    statusEl.className = 'status error';
+    return;
+  }
+  let lowestIdx = 0;
+  let maxY = -Infinity;
+  for (let i = 0; i < points.length; i++) {
+    if (points.at(i).y > maxY) {
+      maxY = points.at(i).y;
+      lowestIdx = i;
+    }
+  }
+  const vertex = points.at(lowestIdx);
+  const hasLeftArm = lowestIdx >= 2 && (vertex.y - first.y) >= cfg.armLength;
+  const hasRightArm = (points.length - 1 - lowestIdx) >= 3 && (vertex.y - last.y) >= cfg.rightArmLength;
+  const movesLeftToRight = (last.x - first.x) >= cfg.leftToRight && (last.x > vertex.x);
+  if (!hasLeftArm || !hasRightArm || !movesLeftToRight) {
+    statusEl.textContent = '✕ Фигура не похожа на галочку ✓. Попробуйте еще раз.';
+    statusEl.className = 'status error';
+    return;
+  }
+  let intervals = new Array();
+  for (let i = 1; i < points.length; i++) {
+    const dt = points.at(i).t - points.at(i - 1).t;
+    if (dt > 0) intervals.push(dt);
+  }
+  if (intervals.length === 0) {
+    statusEl.textContent = '✕ Не удалось проанализировать ритм.';
+    statusEl.className = 'status error';
+    return;
+  }
+  let meanDt = 0;
+  for (let i = 0; i < intervals.length; i++) meanDt += intervals.at(i);
+  meanDt = meanDt / intervals.length;
+  let variance = 0;
+  for (let i = 0; i < intervals.length; i++) {
+    const diff = intervals.at(i) - meanDt;
+    variance += diff * diff;
+  }
+  const stdDev = Math.sqrt(variance / intervals.length);
+  if (stdDev < cfg.stdDevMin) {
+    statusEl.textContent = '✕ Обнаружен роботизированный ввод.';
+    statusEl.className = 'status error';
+    return;
+  }
+  box.classList.add('valid');
+  statusEl.textContent = '✓ Согласие подтверждено! Вы человек.';
+  statusEl.className = 'status success';
+  statsEl.textContent = 'Точек: ' + points.length + ' · Время: ' + (durationMs / 1000).toFixed(2) + ' сек · Разброс ритма: ' + stdDev.toFixed(1) + ' мс';
+  
+  // Сбросить флаг теста после успешной проверки
+  allowBotTest = false;
+  console.log('[captcha] SUCCESS | allowBotTest reset to false');
+}
+
+document.getElementById('clearBtn').addEventListener('click', clearCanvas);
+document.getElementById('submitBtn').addEventListener('click', verifyCheckmark);
+
+let simTimerId = null;
+function simulateHumanCheckmark() {
+  // === НОВОЕ: Ставим флаг, разрешающий программный ввод ===
+  allowBotTest = false;
+  console.log('[captcha] Bot test started | allowBotTest = true');
+  
+  if (simTimerId) {
+    clearTimeout(simTimerId);
+    simTimerId = null;
+  }
+  clearCanvas();
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  const pStart = {
+    x: w * (0.24 + (Math.random() - 0.5) * 0.05),
+    y: h * (0.48 + (Math.random() - 0.5) * 0.08)
+  };
+  const pVertex = {
+    x: w * (0.42 + (Math.random() - 0.5) * 0.05),
+    y: h * (0.76 + (Math.random() - 0.5) * 0.06)
+  };
+  const pEnd = {
+    x: w * (0.78 + (Math.random() - 0.5) * 0.06),
+    y: h * (0.24 + (Math.random() - 0.5) * 0.06)
+  };
+  const ctrl1 = {
+    x: (pStart.x + pVertex.x) / 2 - 4 + Math.random() * 8,
+    y: (pStart.y + pVertex.y) / 2 + 3 + Math.random() * 6
+  };
+  const ctrl2 = {
+    x: (pVertex.x + pEnd.x) / 2 + 5 + Math.random() * 8,
+    y: (pVertex.y + pEnd.y) / 2 + 4 + Math.random() * 6
+  };
+  const trajectory = new Array();
+  const downSteps = 12 + Math.floor(Math.random() * 5);
+  const upSteps = 18 + Math.floor(Math.random() * 6);
+  for (let i = 0; i <= downSteps; i++) {
+    const rawT = i / downSteps;
+    const t = 1 - Math.pow(1 - rawT, 1.6);
+    const x = (1 - t) * (1 - t) * pStart.x + 2 * (1 - t) * t * ctrl1.x + t * t * pVertex.x;
+    const y = (1 - t) * (1 - t) * pStart.y + 2 * (1 - t) * t * ctrl1.y + t * t * pVertex.y;
+    const jitterX = i === 0 ? 0 : (Math.random() - 0.5) * 1.4;
+    const jitterY = i === 0 ? 0 : (Math.random() - 0.5) * 1.4;
+    const delay = i === downSteps ? (25 + Math.random() * 20) : (11 + Math.random() * 14);
+    trajectory.push({ x: x + jitterX, y: y + jitterY, delay: delay });
+  }
+  for (let i = 1; i <= upSteps; i++) {
+    const rawT = i / upSteps;
+    const t = Math.pow(rawT, 1.35);
+    const x = (1 - t) * (1 - t) * pVertex.x + 2 * (1 - t) * t * ctrl2.x + t * t * pEnd.x;
+    const y = (1 - t) * (1 - t) * pVertex.y + 2 * (1 - t) * t * ctrl2.y + t * t * pEnd.y;
+    const jitterX = (Math.random() - 0.5) * 1.6;
+    const jitterY = (Math.random() - 0.5) * 1.6;
+    const delay = 10 + Math.random() * 15;
+    trajectory.push({ x: x + jitterX, y: y + jitterY, delay: delay });
+  }
+  let stepIdx = 0;
+  function dispatchNextPoint() {
+    if (stepIdx >= trajectory.length) {
+      const lastPt = trajectory.at(trajectory.length - 1);
+      canvas.dispatchEvent(new PointerEvent('pointerup', {
+        clientX: rect.left + lastPt.x,
+        clientY: rect.top + lastPt.y,
+        bubbles: true
+      }));
+      simTimerId = null;
+      return;
+    }
+    const pt = trajectory.at(stepIdx);
+    const eventType = stepIdx === 0 ? 'pointerdown' : 'pointermove';
+    canvas.dispatchEvent(new PointerEvent(eventType, {
+      clientX: rect.left + pt.x,
+      clientY: rect.top + pt.y,
+      bubbles: true
+    }));
+    stepIdx++;
+    if (stepIdx < trajectory.length) {
+      simTimerId = setTimeout(dispatchNextPoint, trajectory.at(stepIdx).delay);
+    } else {
+      simTimerId = setTimeout(dispatchNextPoint, 12);
+    }
+  }
+  dispatchNextPoint();
+}
+
+document.getElementById('simBotBtn').addEventListener('click', simulateHumanCheckmark);
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+</script>
+</body>
+</html>

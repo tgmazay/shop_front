@@ -1,156 +1,105 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import PersonalDataConsent from '@/components/PersonalDataConsent.vue'
-import { CONSENT_VERSION } from '@/constants/legal'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
-const CONSENT_STORAGE_KEY = 'pd_consent'
 const OAUTH_STATE_KEY = 'oauth_state'
+const OAUTH_MODE_KEY = 'oauth_mode'
+const REDIRECT_KEY = 'oauth_redirect'
 
 const isLoading = ref(true)
-const error = ref(null)
+const isSuccess = ref(false)
+const error = ref('')
+const returnPath = ref('/account/profile')
 
-// Сценарий, когда пользователь вернулся от Яндекса без зафиксированного согласия
-// (например, открыл страницу по прямой ссылке): просим подтвердить согласие,
-// а не блокируем вход.
-const needsConsent = ref(false)
-const consentAccepted = ref(false)
-const consentError = ref(false)
-// Необязательное согласие на рекламные сообщения (ч. 1 ст. 18 ФЗ «О рекламе»)
-const marketingAccepted = ref(false)
+function resolveReturnPath() {
+  const stored = sessionStorage.getItem(REDIRECT_KEY)
+  sessionStorage.removeItem(REDIRECT_KEY)
 
-const pendingCode = ref('')
+  const isSafe = Boolean(stored) && stored.startsWith('/') && !stored.startsWith('//')
 
-function readStoredConsent() {
-  try {
-    return JSON.parse(sessionStorage.getItem(CONSENT_STORAGE_KEY) || 'null')
-  } catch {
-    return null
-  }
+  return isSafe ? stored : '/account/profile'
 }
 
-function storeConsent() {
-  const consent = {
-    version: CONSENT_VERSION,
-    acceptedAt: new Date().toISOString(),
-    provider: 'yandex',
-    marketing: marketingAccepted.value,
-  }
-  sessionStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(consent))
-  return consent
+function clearOAuthState() {
+  sessionStorage.removeItem(OAUTH_STATE_KEY)
+  sessionStorage.removeItem(OAUTH_MODE_KEY)
 }
 
-onMounted(() => {
-  // Получаем код из query-параметров URL (например, ?code=12345)
+function goBack() {
+  router.replace(returnPath.value || '/account/profile')
+}
+
+onMounted(async () => {
+  returnPath.value = resolveReturnPath()
+
+  // Страница обслуживает только привязку соцсети из личного кабинета.
+  // Публичный вход через Яндекс на бэкенде удалён.
+  if (sessionStorage.getItem(OAUTH_MODE_KEY) !== 'link') {
+    error.value = 'Привязка Яндекс ID доступна только из личного кабинета.'
+    isLoading.value = false
+    return
+  }
+
+  if (route.query.error) {
+    error.value = route.query.error_description
+      ? String(route.query.error_description)
+      : 'Яндекс отклонил запрос на привязку.'
+
+    clearOAuthState()
+    isLoading.value = false
+    return
+  }
+
   const code = route.query.code
   const state = route.query.state
   const expectedState = sessionStorage.getItem(OAUTH_STATE_KEY)
 
   if (!code) {
-    error.value = 'Отсутствует код авторизации. Пожалуйста, попробуйте войти снова.'
+    error.value = 'Отсутствует код авторизации. Вернитесь в кабинет и попробуйте снова.'
+    clearOAuthState()
     isLoading.value = false
     return
   }
 
-  // Защита от CSRF: если state был сохранён перед редиректом, он должен совпасть
+  // Защита от CSRF: state должен совпасть с сохранённым перед редиректом.
   if (expectedState && state !== expectedState) {
-    error.value =
-      'Сессия входа устарела. Пожалуйста, вернитесь на страницу входа и попробуйте снова.'
+    error.value = 'Сессия привязки устарела. Вернитесь в кабинет и попробуйте снова.'
+    clearOAuthState()
     isLoading.value = false
     return
   }
 
-  pendingCode.value = String(code)
-
-  const consent = readStoredConsent()
-  if (!consent) {
-    needsConsent.value = true
-    isLoading.value = false
-    return
-  }
-
-  verify(consent)
-})
-
-async function confirmConsent() {
-  if (!consentAccepted.value) {
-    consentError.value = true
-    return
-  }
-
-  consentError.value = false
-  needsConsent.value = false
-  isLoading.value = true
-  await verify(storeConsent())
-}
-
-async function verify(consent) {
   try {
-    const response = await fetch('/backend/api/auth/yandex', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // Критически важно для записи HttpOnly куки с Refresh-токеном
-      body: JSON.stringify({
-        code: pendingCode.value,
+    await authStore.linkYandexCode({ code: String(code) })
 
-        // Значения чекбоксов, которые пользователь отметил до редиректа на Яндекс
-        pii_consent: true, // без него verify() не вызывается
-        pii_consent_version: consent.version, // версия редакции согласия
+    clearOAuthState()
+    isSuccess.value = true
+    isLoading.value = false
 
-        marketing_consent: Boolean(consent.marketing), // согласие на рассылку рекламы
-
-        consents_accepted_at: consent.acceptedAt, // дата согласий
-      }),
-    })
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}))
-      throw new Error(errData.message || 'Ошибка сервера при проверке данных')
-    }
-
-    const data = await response.json()
-
-    console.log(data)
-
-    // 1. Сохраняем accessToken (если бэкенд возвращает его в теле ответа)
-    // Если у тебя используется Pinia/Vuex, лучше сохранить токен туда:
-    // useAuthStore().setToken(data.accessToken)
-    if (data.accessToken) {
-      localStorage.setItem('accessToken', data.accessToken)
-    }
-
-    // Согласие зафиксировано на бэкенде — локальную копию больше не храним
-    sessionStorage.removeItem(CONSENT_STORAGE_KEY)
-    sessionStorage.removeItem(OAUTH_STATE_KEY)
-
-    // 2. Маршрутизация в зависимости от статуса пользователя
-    if (data.status === 'ONBOARDING') {
-      // Пользователь новый, нужно заполнить профиль
-      router.replace('/complete-profile')
-    } else if (data.status === 'ACTIVE') {
-      // Пользователь уже зарегистрирован, ведём в личный кабинет / к урокам
-      router.replace('/lessons')
-    } else {
-      throw new Error('Неизвестный статус аккаунта')
-    }
+    setTimeout(() => {
+      if (isSuccess.value) goBack()
+    }, 1500)
   } catch (err) {
-    console.error('Yandex Auth Error:', err)
-    error.value = err.message || 'Не удалось выполнить вход через Яндекс ID'
+    clearOAuthState()
+    error.value =
+      err?.code === 'YANDEX_LINK_UNAVAILABLE'
+        ? 'Привязка Яндекс ID пока недоступна.'
+        : err?.message || 'Не удалось привязать Яндекс ID.'
     isLoading.value = false
   }
-}
+})
 </script>
 
 <template>
   <div
     class="min-h-screen bg-slate-50 flex items-center justify-center px-4 relative overflow-hidden font-sans text-slate-900"
   >
-    <!-- Декоративное фоновое свечение (как на странице входа) -->
+    <!-- Декоративное фоновое свечение -->
     <div
       class="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-200 bg-indigo-900/5 rounded-full blur-[120px] pointer-events-none"
     ></div>
@@ -182,67 +131,47 @@ async function verify(consent) {
         </div>
         <div>
           <h2 class="text-xl font-black text-slate-600 uppercase tracking-tight mb-2">
-            Проверка данных
+            Привязываем Яндекс ID
           </h2>
           <p class="text-slate-500 text-sm leading-relaxed">
-            Завершаем вход через Яндекс ID. Пожалуйста, подождите...
+            Завершаем привязку аккаунта. Пожалуйста, подождите...
           </p>
         </div>
       </div>
 
-      <!-- Подтверждение согласия на обработку персональных данных -->
-      <div v-else-if="needsConsent" class="space-y-6 text-left">
-        <div class="text-center space-y-3">
-          <div
-            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-600 text-white"
-          >
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              ></path>
-            </svg>
-          </div>
-          <h2 class="text-xl font-black text-slate-600 uppercase tracking-tight">
-            Подтвердите согласие
+      <!-- Успешная привязка -->
+      <div v-else-if="isSuccess" class="space-y-6">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600"
+        >
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-slate-600 uppercase tracking-tight mb-2">
+            Яндекс ID привязан
           </h2>
           <p class="text-slate-500 text-sm leading-relaxed">
-            Остался один шаг: подтвердите согласие на обработку персональных данных, чтобы завершить
-            вход.
+            Теперь вы можете использовать аккаунт Яндекса для входа и управления профилем.
           </p>
         </div>
-
-        <PersonalDataConsent
-          v-model="consentAccepted"
-          v-model:marketing="marketingAccepted"
-          :error="consentError"
-          show-marketing
-          @change="consentError = false"
-        />
-
         <button
           type="button"
-          :disabled="!consentAccepted"
-          :aria-disabled="!consentAccepted"
-          @click="confirmConsent"
-          class="w-full py-3.5 px-6 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-slate-900/20 uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-600"
+          @click="goBack"
+          class="w-full py-3.5 px-6 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-slate-900/20 uppercase tracking-wide text-sm"
         >
-          Продолжить вход
-        </button>
-
-        <button
-          type="button"
-          @click="router.push('/signin')"
-          class="w-full py-2 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
-        >
-          Вернуться на страницу входа
+          Вернуться в кабинет
         </button>
       </div>
 
-      <!-- Состояние ошибки -->
-      <div v-else-if="error" class="space-y-6">
+      <!-- Ошибка привязки -->
+      <div v-else class="space-y-6">
         <div
           class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600"
         >
@@ -257,16 +186,14 @@ async function verify(consent) {
         </div>
         <div>
           <h2 class="text-xl font-black text-slate-600 uppercase tracking-tight mb-2">
-            Ошибка входа
+            Не удалось привязать Яндекс ID
           </h2>
-          <p class="text-slate-500 text-sm leading-relaxed mb-6">
-            {{ error }}
-          </p>
+          <p class="text-slate-500 text-sm leading-relaxed mb-6">{{ error }}</p>
           <button
-            @click="router.push('/signin')"
+            @click="goBack"
             class="w-full py-3.5 px-6 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-slate-900/20 uppercase tracking-wide text-sm"
           >
-            Вернуться ко входу
+            Вернуться в кабинет
           </button>
         </div>
       </div>

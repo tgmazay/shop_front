@@ -6,15 +6,14 @@ import { LEGAL_DOCS } from '@/constants/legal'
 // Чекбокс НЕ предустановлен и не объединён с другими согласиями.
 const accepted = defineModel({ type: Boolean, default: false })
 
-// Необязательное согласие на информационные и рекламные сообщения
-// (ч. 1 ст. 18 ФЗ «О рекламе») — не влияет на доступ к аккаунту.
-const marketing = defineModel('marketing', { type: Boolean, default: false })
-
 const props = defineProps({
   error: { type: Boolean, default: false },
-  showMarketing: { type: Boolean, default: false },
   // Переливающаяся рамка, пока согласие не проставлено
   highlight: { type: Boolean, default: true },
+  // Актуальная редакция согласия на сервере. Если не передана —
+  // показываем локальный документ.
+  documentUrl: { type: String, default: '' },
+  documentVersion: { type: String, default: '' },
 })
 
 const emit = defineEmits(['change'])
@@ -22,7 +21,7 @@ const emit = defineEmits(['change'])
 const uid = useId()
 const consentId = computed(() => `pd-consent-${uid}`)
 const textId = computed(() => `pd-consent-text-${uid}`)
-const marketingId = computed(() => `pd-marketing-${uid}`)
+const consentHref = computed(() => props.documentUrl || LEGAL_DOCS.consent)
 
 // Момент, когда пользователь поставил галочку (показываем ему для наглядности).
 const acceptedAt = ref('')
@@ -56,12 +55,14 @@ watch(accepted, (value) => {
           </label>
           <p :id="textId" class="mt-1 text-[8px]">
             Я прочитал(а) и принимаю
-            <RouterLink
-              :to="LEGAL_DOCS.consent"
+            <a
+              :href="consentHref"
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               class="underline hover:text-slate-700 transition-colors"
-              >Согласие на обработку персональных данных</RouterLink
+              >Согласие на обработку персональных данных</a
+            ><span v-if="props.documentVersion" class="text-slate-400">
+              (редакция от {{ props.documentVersion }})</span
             >
             и
             <RouterLink
@@ -74,20 +75,6 @@ watch(accepted, (value) => {
           </p>
         </div>
       </div>
-    </div>
-
-    <div v-if="props.showMarketing" class="flex items-start gap-3 px-1">
-      <input
-        :id="marketingId"
-        v-model="marketing"
-        type="checkbox"
-        class="mt-0.5 ml-3 h-5 w-5 shrink-0 cursor-pointer rounded border-slate-300 accent-slate-600"
-        @change="emit('change')"
-      />
-      <label :for="marketingId" class="cursor-pointer text-xs leading-relaxed text-slate-500">
-        Я согласен(на) получать информационные и рекламные сообщения. Необязательно, на доступ к
-        аккаунту не влияет.
-      </label>
     </div>
   </div>
 </template>

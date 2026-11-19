@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useCartStore } from '@/stores/cart'
+import { useCart } from '@/stores/cart'
 
-const cart = useCartStore()
+const cart = useCart()
 </script>
 
 <template>
-  <router-link 
-    to="/cart" 
+  <router-link
+    to="/account/cart"
     class="inline-flex items-center gap-1 text-stone-600 hover:text-stone-900 transition"
   >
     <span class="text-xs font-medium uppercase tracking-widest">Корзина</span>

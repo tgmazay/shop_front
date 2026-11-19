@@ -61,7 +61,7 @@ function handleSubmit() {
           <!-- Фото -->
           <div class="order-1 lg:order-2">
             <div
-              class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-[3/4] lg:aspect-[4/5] group"
+              class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-3/4 lg:aspect-4/5 group"
             >
               <img
                 src="https://optim.tildacdn.com/tild3735-6561-4335-b739-333064303966/-/resize/840x/-/format/webp/039.jpg.webp"
@@ -81,7 +81,7 @@ function handleSubmit() {
           <!-- Фото -->
           <div class="order-1">
             <div
-              class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-[3/4] lg:aspect-[4/5] group"
+              class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-3/4 lg:aspect-4/5 group"
             >
               <img
                 src="https://static.tildacdn.com/tild6436-6530-4262-b466-366663373464/Studio_Session-10175.jpg"
@@ -241,7 +241,7 @@ function handleSubmit() {
           <!-- Фото -->
           <div class="order-1 lg:order-2">
             <div
-              class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-[3/4] lg:aspect-[4/5] group"
+              class="rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl aspect-3/4 lg:aspect-4/5 group"
             >
               <img
                 src="https://optim.tildacdn.com/tild6130-3430-4334-b332-336431383832/-/format/webp/Plate_Geometry_Club_.jpg.webp"

@@ -1,14 +1,14 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import PersonalDataConsent from '@/components/PersonalDataConsent.vue'
-import { CONSENT_VERSION } from '@/constants/legal'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const route = useRoute()
+const authStore = useAuthStore()
 
 const form = ref({
   email: '',
-  phone: '',
   password: '',
 })
 
@@ -16,50 +16,47 @@ const isLoading = ref(false)
 const error = ref('')
 const showPassword = ref(false)
 
-// Обязательное согласие на обработку персональных данных (ст. 9 152-ФЗ)
-const consentAccepted = ref(false)
-const consentError = ref(false)
-const consentAcceptedAt = ref('')
-// Необязательное согласие на информационные и рекламные сообщения
-const marketingAccepted = ref(false)
+function resolveNextPath() {
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+  const isSafe = redirect.startsWith('/') && !redirect.startsWith('//')
 
-const canSubmit = computed(() => consentAccepted.value)
+  return isSafe ? redirect : '/account/profile'
+}
 
-function handleSubmit() {
-  if (!consentAccepted.value) {
-    consentError.value = true
-    error.value = 'Для регистрации необходимо согласие на обработку персональных данных'
+async function handleSubmit() {
+  error.value = ''
+
+  if (!form.value.email || !form.value.password) {
+    error.value = 'Введите email и пароль'
     return
   }
 
-  if (!form.value.email || !form.value.phone || !form.value.password) {
-    error.value = 'Пожалуйста, заполните все поля'
-    return
-  }
-
-  // Простая валидация email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
   if (!emailRegex.test(form.value.email)) {
     error.value = 'Введите корректный адрес электронной почты'
     return
   }
 
-  consentAcceptedAt.value = new Date().toISOString()
-  error.value = ''
+  if (form.value.password.length < 6) {
+    error.value = 'Пароль должен быть не менее 6 символов'
+    return
+  }
+
   isLoading.value = true
 
-  // Имитация запроса к API
-  setTimeout(() => {
-    console.log('Registration data:', {
-      ...form.value,
-      consentVersion: CONSENT_VERSION,
-      consentAcceptedAt: consentAcceptedAt.value,
-      marketing: marketingAccepted.value,
+  try {
+    await authStore.loginWithPassword({
+      email: form.value.email.trim(),
+      password: form.value.password,
     })
+
+    await router.replace(resolveNextPath())
+  } catch (err) {
+    error.value = err?.message || 'Не удалось войти. Проверьте email и пароль.'
+  } finally {
     isLoading.value = false
-    // После успешной регистрации перенаправляем, например, на страницу оплаты или в клуб
-    router.push('/checkout')
-  }, 1500)
+  }
 }
 
 function togglePassword() {
@@ -71,7 +68,7 @@ function togglePassword() {
   <div
     class="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans text-slate-900"
   >
-    <!-- Декоративное фоновое свечение (как в Hero секциях) -->
+    <!-- Декоративное фоновое свечение -->
     <div
       class="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-200 bg-indigo-900/5 rounded-full blur-[120px] pointer-events-none"
     ></div>
@@ -79,7 +76,7 @@ function togglePassword() {
       class="absolute bottom-0 right-0 w-150 h-150 bg-amber-900/5 rounded-full blur-[100px] pointer-events-none"
     ></div>
 
-    <!-- Кнопка "Назад на главную" -->
+    <!-- Кнопка "На главную" -->
     <button
       @click="router.push('/')"
       class="absolute top-6 left-6 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-amber-600 transition-colors duration-300 z-20"
@@ -95,7 +92,7 @@ function togglePassword() {
       На главную
     </button>
 
-    <!-- Основная карточка регистрации -->
+    <!-- Основная карточка входа -->
     <div
       class="max-w-md w-full bg-white rounded-2xl shadow-2xl border border-indigo-100 p-8 sm:p-10 space-y-8 relative z-10"
     >
@@ -109,13 +106,13 @@ function togglePassword() {
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
             ></path>
           </svg>
         </div>
-        <h1 class="text-3xl font-black text-slate-600 uppercase tracking-tight">Регистрация</h1>
+        <h1 class="text-3xl font-black text-slate-600 uppercase tracking-tight">Вход</h1>
         <p class="text-slate-500 text-sm leading-relaxed">
-          Получите доступ к урокам и начните создавать визуальный контент, за который платят бренды.
+          Рады видеть вас снова. Продолжайте там, где остановились.
         </p>
       </div>
 
@@ -124,15 +121,16 @@ function togglePassword() {
         <!-- Поле: Почта -->
         <div class="space-y-1.5">
           <label
-            for="email"
+            for="signin-email"
             class="block text-xs font-bold text-slate-600 uppercase tracking-wider"
           >
             Электронная почта
           </label>
           <input
-            id="email"
+            id="signin-email"
             v-model="form.email"
             type="email"
+            autocomplete="email"
             placeholder="your@email.com"
             class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
           />
@@ -140,18 +138,28 @@ function togglePassword() {
 
         <!-- Поле: Пароль -->
         <div class="space-y-1.5">
-          <label
-            for="password"
-            class="block text-xs font-bold text-slate-600 uppercase tracking-wider"
-          >
-            Пароль
-          </label>
+          <div class="flex items-center justify-between">
+            <label
+              for="signin-password"
+              class="block text-xs font-bold text-slate-600 uppercase tracking-wider"
+            >
+              Пароль
+            </label>
+            <button
+              type="button"
+              @click="router.push('/forgotpassword')"
+              class="text-xs font-bold text-amber-600 hover:text-amber-700 transition-colors"
+            >
+              Забыли пароль?
+            </button>
+          </div>
           <div class="relative">
             <input
-              id="password"
+              id="signin-password"
               v-model="form.password"
               :type="showPassword ? 'text' : 'password'"
-              placeholder="Минимум 8 символов"
+              autocomplete="current-password"
+              placeholder="Ваш пароль"
               class="w-full px-4 py-3.5 pr-12 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
             />
             <button
@@ -192,44 +200,11 @@ function togglePassword() {
           </div>
         </div>
 
-        <!-- Поле: Телефон -->
-        <div class="space-y-1.5">
-          <label
-            for="phone"
-            class="block text-xs font-bold text-slate-600 uppercase tracking-wider"
-          >
-            Телефон
-          </label>
-          <input
-            id="phone"
-            v-model="form.phone"
-            type="tel"
-            placeholder="+7 (999) 000-00-00"
-            class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
-          />
-        </div>
-
-        <!-- Поле: Имя -->
-        <div class="space-y-1.5">
-          <label
-            for="username"
-            class="block text-xs font-bold text-slate-600 uppercase tracking-wider"
-          >
-            Имя
-          </label>
-          <input
-            id="username"
-            v-model="form.username"
-            type="tel"
-            placeholder="Ваше имя"
-            class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-lg focus:border-amber-500 focus:bg-white outline-none transition-all duration-300 text-slate-700 placeholder-slate-400"
-          />
-        </div>
-
         <!-- Сообщение об ошибке -->
         <div
           v-if="error"
           class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm flex items-center gap-2"
+          role="alert"
         >
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -242,19 +217,10 @@ function togglePassword() {
           {{ error }}
         </div>
 
-        <!-- Обязательное согласие на обработку персональных данных (152-ФЗ) -->
-        <PersonalDataConsent
-          v-model="consentAccepted"
-          v-model:marketing="marketingAccepted"
-          :error="consentError"
-          show-marketing
-          @change="consentError = false"
-        />
-
         <!-- Кнопка отправки -->
         <button
           type="submit"
-          :disabled="isLoading || !canSubmit"
+          :disabled="isLoading"
           class="w-full py-4 px-6 bg-slate-600 text-white font-bold rounded-lg hover:bg-amber-600 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-slate-900/20 hover:-translate-y-0.5 uppercase tracking-wide text-sm flex items-center justify-center gap-2"
         >
           <svg
@@ -278,24 +244,22 @@ function togglePassword() {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          {{ isLoading ? 'Создание аккаунта...' : 'Зарегистрироваться' }}
+          {{ isLoading ? 'Входим...' : 'Войти' }}
         </button>
       </form>
 
-      <!-- Ссылка на вход -->
+      <!-- Ссылка на регистрацию -->
       <div class="text-center pt-4 border-t border-slate-100">
         <p class="text-sm text-slate-500">
-          Уже есть аккаунт?
+          Ещё нет аккаунта?
           <button
-            @click="router.push('/signin')"
+            @click="router.push('/register')"
             class="font-bold text-amber-600 hover:text-amber-700 transition-colors ml-1"
           >
-            Войти
+            Зарегистрироваться
           </button>
         </p>
       </div>
-
-      <!-- Согласие на обработку ПД оформляется отдельным обязательным чекбоксом выше -->
     </div>
   </div>
 </template>

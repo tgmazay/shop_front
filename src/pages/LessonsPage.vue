@@ -1,9 +1,36 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCart } from '@/stores/cart'
+import { API } from '@/constants/api'
 
 const lessons = ref([])
 const loading = ref(true)
 const error = ref(null)
+
+const router = useRouter()
+const { add, has } = useCart()
+
+// Сообщение после добавления урока в корзину
+const cartMessage = ref('')
+let cartMessageTimer = null
+
+function addToCart(lesson) {
+  const result = add(lesson)
+
+  if (result.reason === 'unauthorized') {
+    // Корзина привязана к пользователю: гостя отправляем на вход
+    router.push({ path: '/login', query: { redirect: '/lessons' } })
+    return
+  }
+
+  cartMessage.value = result.ok ? `«${lesson.title}» добавлен в корзину` : 'Этот урок уже в корзине'
+
+  clearTimeout(cartMessageTimer)
+  cartMessageTimer = setTimeout(() => {
+    cartMessage.value = ''
+  }, 2500)
+}
 
 // Пагинация
 const page = ref(1)
@@ -36,7 +63,7 @@ const fetchLessons = async (isLoadMore = false) => {
   error.value = null
 
   try {
-    const response = await fetch(`/backend/lessons?page=${page.value}&pageSize=${pageSize.value}`)
+    const response = await fetch(`${API.lessons}?page=${page.value}&pageSize=${pageSize.value}`)
     if (!response.ok) throw new Error('Не удалось загрузить уроки')
 
     const data = await response.json()
@@ -143,6 +170,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   disconnectObserver()
+  clearTimeout(cartMessageTimer)
 })
 </script>
 
@@ -160,6 +188,16 @@ onUnmounted(() => {
               Пошаговые видео-руководства по фудстайлингу: от простых закусок до сложных композиций
             </p>
           </div>
+        </div>
+
+        <!-- Уведомление о добавлении в корзину -->
+        <div
+          v-if="cartMessage"
+          class="mb-4 text-center text-xs md:text-sm font-bold text-amber-600"
+          role="status"
+          aria-live="polite"
+        >
+          {{ cartMessage }}
         </div>
 
         <!-- Состояние загрузки -->
@@ -208,11 +246,10 @@ onUnmounted(() => {
 
         <!-- Сетка уроков: 2 колонки на мобилках, 2 на md, 5 на lg -->
         <div v-else class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-5">
-          <router-link
+          <div
             v-for="lesson in lessons"
             :key="lesson.lesson_id"
-            :to="`/lessons/${lesson.lesson_id}`"
-            class="group relative flex flex-col bg-slate-100 rounded-lg md:rounded-xl overflow-hidden border border-indigo-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+            class="group relative flex flex-col bg-slate-100 rounded-lg md:rounded-xl overflow-hidden border border-indigo-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
           >
             <!-- Медиа-блок (Видео превью) -->
             <div class="relative aspect-video bg-slate-900 overflow-hidden">
@@ -314,9 +351,22 @@ onUnmounted(() => {
                 <div class="text-sm md:text-2xl font-black text-slate-600">
                   {{ formatPrice(lesson.price) }}
                 </div>
+                <button
+                  type="button"
+                  @click.stop.prevent="addToCart(lesson)"
+                  :disabled="has(lesson.lesson_id)"
+                  class="px-2.5 py-2 md:px-4 md:py-2.5 text-[9px] md:text-xs font-bold uppercase tracking-widest rounded-lg transition-all duration-300 disabled:cursor-default"
+                  :class="
+                    has(lesson.lesson_id)
+                      ? 'bg-slate-200 text-slate-500'
+                      : 'bg-slate-600 text-white hover:bg-amber-600'
+                  "
+                >
+                  {{ has(lesson.lesson_id) ? 'В корзине' : 'В корзину' }}
+                </button>
               </div>
             </div>
-          </router-link>
+          </div>
         </div>
 
         <!-- Индикатор подгрузки -->

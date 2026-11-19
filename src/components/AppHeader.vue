@@ -1,3 +1,22 @@
+<script setup>
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { useUser } from '@/stores/user'
+
+const { state: user, initials } = useUser()
+const router = useRouter()
+const authStore = useAuthStore()
+
+// storeToRefs сохраняет реактивность при деструктуризации
+const { isAuthenticated } = storeToRefs(authStore)
+
+async function handleLogout() {
+  await authStore.logout()
+  router.push('/login')
+}
+</script>
+
 <template>
   <header class="border-b border-stone-100 bg-white/90 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-[1600px] mx-auto h-14 flex items-center justify-between px-4 relative">
@@ -102,17 +121,89 @@
         <router-link to="/about" class="hover:text-stone-900 transition py-8">Обо мне</router-link>
       </nav>
 
-      <!-- Кнопка входа и корзина -->
-      <div class="flex items-center gap-6">
-        <!-- Не забудьте импортировать CartLink в секцию <script> -->
-        <CartLink class="hidden md:inline-flex" />
-
+      <!-- Правая часть: авторизация -->
+      <div class="hidden md:flex items-center gap-6">
+        <!-- НЕ авторизован -->
         <router-link
-          to="/signin"
-          class="hidden md:block border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-6 py-3 hover:bg-stone-900 hover:text-white transition duration-300"
+          v-if="!isAuthenticated"
+          to="/login"
+          class="border border-stone-900 text-stone-900 text-xs font-medium uppercase tracking-widest px-6 py-3 hover:bg-stone-900 hover:text-white transition duration-300"
         >
           Вход в кабинет
         </router-link>
+
+        <!-- Авторизован -->
+        <template v-else>
+          <!-- Библиотека -->
+          <router-link
+            to="/account/library"
+            class="text-xs font-medium uppercase tracking-widest text-stone-500 hover:text-stone-900 transition"
+          >
+            <div
+              class="mt-3 inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-400 mb-4"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+            </div>
+          </router-link>
+
+          <!-- Корзина -->
+          <router-link
+            to="/account/cart"
+            class="text-xs font-medium uppercase tracking-widest text-stone-500 hover:text-stone-900 transition"
+          >
+            <div
+              class="mt-3 inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-400 mb-4"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+          </router-link>
+
+          <router-link
+            to="/account/profile"
+            class="text-xs font-medium uppercase tracking-widest text-stone-500 hover:text-stone-900 transition"
+            :title="user.social.name || 'Профиль'"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl font-black shrink-0 overflow-hidden"
+            >
+              <img
+                v-if="user.social.avatar"
+                :src="user.social.avatar"
+                alt=""
+                class="w-full h-full object-cover"
+              />
+              <template v-else>{{ initials }}</template>
+            </div>
+          </router-link>
+          <button
+            @click="handleLogout"
+            class="text-stone-400 hover:text-red-500 transition cursor-pointer"
+            title="Выйти"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+          </button>
+        </template>
       </div>
     </div>
   </header>
